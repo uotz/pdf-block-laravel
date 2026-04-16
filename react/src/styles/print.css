@@ -1,0 +1,116 @@
+/* ─── Print / PDF Export Styles ──────────────────────────────── */
+@media print {
+  /* Hide all editor UI */
+  .pdfb-toolbar,
+  .pdfb-sidebar,
+  .pdfb-right-panel,
+  .pdfb-floating-toolbar,
+  .pdfb-block-label,
+  .pdfb-drop-indicator,
+  .pdfb-page-break-line,
+  .pdfb-pagebreak-band,
+  .pdfb-spacing-padding,
+  .pdfb-spacing-margin,
+  .pdfb-column-empty {
+    display: none !important;
+  }
+
+  /* Reset the canvas to fill */
+  .pdfb-root {
+    background: none !important;
+    overflow: visible !important;
+  }
+
+  .pdfb-editor-layout {
+    display: block !important;
+  }
+
+  .pdfb-canvas-area {
+    overflow: visible !important;
+    padding: 0 !important;
+    background: none !important;
+  }
+
+  .pdfb-page {
+    box-shadow: none !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+    width: 100% !important;
+    min-height: auto !important;
+  }
+
+  /* Remove selection outlines */
+  .pdfb-canvas-block {
+    outline: none !important;
+    box-shadow: none !important;
+  }
+
+  /* Page break support */
+  .pdfb-block-pagebreak {
+    break-after: page;
+    page-break-after: always;
+    height: 0 !important;
+    background: none !important;
+    margin: 0 !important;
+  }
+  .pdfb-block-pagebreak::after {
+    display: none !important;
+  }
+
+  /* Spacer retains height */
+  .pdfb-block-spacer {
+    background: none !important;
+  }
+
+  /* Avoid breaks inside blocks */
+  .pdfb-canvas-block {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  /* Images */
+  .pdfb-block-image img {
+    max-width: 100% !important;
+    /* Do NOT override height here — inline styles from the DSL set explicit
+       pixel heights that must be preserved so the print layout matches the
+       canvas measurement used to compute @page size. Overriding with
+       height: auto would cause a mismatch → blank trailing page. */
+  }
+
+  /* Print page setup */
+  @page {
+    margin: 0;
+  }
+}
+
+/* ─── Export mode (applied via class for programmatic export) ── */
+.pdfb-export-mode .pdfb-toolbar,
+.pdfb-export-mode .pdfb-sidebar,
+.pdfb-export-mode .pdfb-right-panel,
+.pdfb-export-mode .pdfb-floating-toolbar,
+.pdfb-export-mode .pdfb-block-label,
+.pdfb-export-mode .pdfb-drop-indicator,
+.pdfb-export-mode .pdfb-page-break-line,
+.pdfb-export-mode .pdfb-spacing-padding,
+.pdfb-export-mode .pdfb-spacing-margin {
+  display: none !important;
+}
+.pdfb-export-mode .pdfb-canvas-block:hover,
+.pdfb-export-mode .pdfb-canvas-block.selected {
+  outline: none !important;
+  box-shadow: none !important;
+}
+.pdfb-export-mode .pdfb-column-empty {
+  display: none !important;
+}
+
+.pdfb-export-mode .pdfb-block-pagebreak {
+  height: 0 !important;
+  background: none !important;
+}
+.pdfb-export-mode .pdfb-block-pagebreak::after {
+  display: none !important;
+}
+.pdfb-export-mode .pdfb-block-spacer {
+  background: none !important;
+}

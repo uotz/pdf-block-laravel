@@ -1,0 +1,212 @@
+/* ─── PDF Builder Design Tokens — Airbnb Design System ──────── */
+:root {
+  /* Base colors */
+  --pdfb-color-bg: #f5f5f5;
+  --pdfb-color-canvas-bg: #ebebeb;
+  --pdfb-color-toolbar-bg: #222222;
+  --pdfb-color-sidebar-bg: #ffffff;
+  --pdfb-color-panel-bg: #ffffff;
+  --pdfb-color-panel-border: #ebebeb;
+
+  /* Surface (inputs, cards, popups) */
+  --pdfb-color-surface: #ffffff;
+  --pdfb-color-surface-hover: #f7f7f7;
+  --pdfb-color-surface-2: #f2f2f2;
+
+  /* Accent — Rausch Red */
+  --pdfb-color-accent: #ff385c;
+  --pdfb-color-accent-hover: #e00b41;
+  --pdfb-color-accent-light: rgba(255, 56, 92, 0.15);
+  --pdfb-color-accent-subtle: rgba(255, 56, 92, 0.08);
+
+  /* Semantic */
+  --pdfb-color-danger: #c13515;
+  --pdfb-color-danger-light: #fef2f2;
+  --pdfb-color-success: #22c55e;
+  --pdfb-color-success-light: #f0fdf4;
+  --pdfb-color-warning: #f59e0b;
+  --pdfb-color-warning-light: #fffbeb;
+
+  /* Text — Near Black palette */
+  --pdfb-color-text-primary: #222222;
+  --pdfb-color-text-secondary: #6a6a6a;
+  --pdfb-color-text-disabled: #929292;
+  --pdfb-color-text-inverse: #ffffff;
+  --pdfb-color-text-on-dark: #ffffff;
+
+  /* Tree / sidebar-panel text (on light panel background) */
+  --pdfb-tree-text: #6a6a6a;
+  --pdfb-tree-text-hover: #222222;
+  --pdfb-tree-text-selected: #ff385c;
+  --pdfb-tree-bg-hover: rgba(255, 56, 92, 0.07);
+  --pdfb-tree-bg-selected: rgba(255, 56, 92, 0.12);
+  --pdfb-tree-header-text: #6a6a6a;
+
+  /* Typography — Airbnb Cereal VF / DM Sans fallback */
+  --pdfb-font-family-ui: 'Airbnb Cereal VF', 'DM Sans', Circular, -apple-system, system-ui, 'Helvetica Neue', Roboto, sans-serif;
+  --pdfb-font-family-mono: 'Fira Code', 'Cascadia Code', Menlo, Monaco, Consolas, monospace;
+  --pdfb-font-size-xs: 11px;
+  --pdfb-font-size-sm: 12px;
+  --pdfb-font-size-base: 13px;
+  --pdfb-font-size-md: 14px;
+  --pdfb-font-size-lg: 16px;
+  --pdfb-font-size-xl: 18px;
+
+  /* Spacing — 8px base unit */
+  --pdfb-space-1: 4px;
+  --pdfb-space-2: 8px;
+  --pdfb-space-3: 12px;
+  --pdfb-space-4: 16px;
+  --pdfb-space-5: 20px;
+  --pdfb-space-6: 24px;
+  --pdfb-space-8: 32px;
+
+  /* Borders — Airbnb radius scale */
+  --pdfb-radius-sm: 4px;
+  --pdfb-radius-md: 8px;
+  --pdfb-radius-lg: 14px;
+  --pdfb-radius-xl: 20px;
+  --pdfb-border-color: #e8e8e8;
+  --pdfb-border-color-hover: #c1c1c1;
+
+  /* Shadows — Airbnb three-layer warm lift */
+  --pdfb-shadow-sm: rgba(0, 0, 0, 0.02) 0px 0px 0px 1px, rgba(0, 0, 0, 0.04) 0px 2px 6px, rgba(0, 0, 0, 0.10) 0px 4px 8px;
+  --pdfb-shadow-md: rgba(0, 0, 0, 0.08) 0px 4px 12px;
+  --pdfb-shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.14);
+  --pdfb-shadow-focus: 0 0 0 2px rgba(255, 56, 92, 0.30);
+  --pdfb-shadow-page: rgba(0, 0, 0, 0.02) 0px 0px 0px 1px, rgba(0, 0, 0, 0.04) 0px 4px 12px, rgba(0, 0, 0, 0.12) 0px 8px 24px;
+
+  /* Overlays & dark surfaces (floating toolbars, code editor, minimap) */
+  --pdfb-color-overlay-bg: #222222;
+  --pdfb-color-overlay-border: rgba(255, 255, 255, 0.10);
+  --pdfb-color-overlay-text: #ffffff;
+  --pdfb-color-overlay-text-muted: rgba(255, 255, 255, 0.70);
+  --pdfb-color-overlay-hover: rgba(255, 255, 255, 0.10);
+  --pdfb-color-overlay-hover-strong: rgba(255, 255, 255, 0.18);
+  --pdfb-color-overlay-sep: rgba(255, 255, 255, 0.14);
+  --pdfb-color-overlay-input-border: rgba(255, 255, 255, 0.20);
+  --pdfb-color-overlay-input-bg: rgba(255, 255, 255, 0.10);
+  --pdfb-color-code-bg: #1e1e2e;
+  --pdfb-color-code-text: #cdd6f4;
+
+  /* Minimap dark glass */
+  --pdfb-color-minimap-bg: rgba(30, 30, 30, 0.88);
+  --pdfb-color-minimap-border: rgba(255, 255, 255, 0.08);
+
+  /* Semantic - page-break / danger zone */
+  --pdfb-color-break-stripe: rgba(239, 68, 68, 0.07);
+  --pdfb-color-break-border: rgba(239, 68, 68, 0.25);
+  --pdfb-color-break-tag: rgba(239, 68, 68, 0.85);
+  --pdfb-color-break-line: rgba(239, 68, 68, 0.70);
+  --pdfb-color-break-scissors: rgba(239, 68, 68, 0.85);
+
+  /* Semantic - page-break annotations (keep-together, break-before/after) */
+  --pdfb-color-break-badge: #8b5cf6;
+
+  /* Semantic - drag ghosts */
+  --pdfb-color-drag-ghost-block: #7c3aed;
+  --pdfb-color-drag-ghost-stripe: #0f766e;
+
+  /* Spacing overlay visualizers */
+  --pdfb-color-spacing-padding: rgba(34, 197, 94, 0.15);
+  --pdfb-color-spacing-margin: rgba(249, 115, 22, 0.15);
+
+  /* Hidden-block warning pattern */
+  --pdfb-color-hidden-stripe: rgba(245, 158, 11, 0.06);
+  --pdfb-color-hidden-border: rgba(245, 158, 11, 0.40);
+
+  /* Lock / danger overlay */
+  --pdfb-color-lock-bg: rgba(239, 68, 68, 0.80);
+  --pdfb-color-locked-toolbar: rgba(239, 68, 68, 0.92);
+
+  /* Transparent swatch indicator */
+  --pdfb-color-swatch-checker-a: #cccccc;
+  --pdfb-color-swatch-cross: #ef4444;
+
+  /* Quick-add / resize accent */
+  --pdfb-color-accent-deep: #e00b41;
+
+  /* Image library */
+  --pdfb-color-img-thumb-bg: #f0f2f4;
+
+  /* Danger action (delete in library) */
+  --pdfb-color-danger-action-bg: #ffeaea;
+  --pdfb-color-danger-action-text: #c0392b;
+
+  /* Preview / overlay body */
+  --pdfb-color-preview-bg: #f8f9fd;
+
+  /* Box shadow for scrollbar / decorative small shadows */
+  --pdfb-shadow-xs: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --pdfb-shadow-inset-accent: inset 0 0 0 1px var(--pdfb-color-accent-light);
+
+  /* Border for focused inputs */
+  --pdfb-border-color-focus: var(--pdfb-color-accent);
+
+  /* Modal scrim */
+  --pdfb-color-scrim: rgba(0, 0, 0, 0.55);
+
+  /* Transitions */
+  --pdfb-transition-fast: 100ms ease;
+  --pdfb-transition-base: 150ms ease;
+  --pdfb-transition-slow: 250ms ease;
+
+  /* Dimensions */
+  --pdfb-toolbar-height: 52px;
+  --pdfb-sidebar-icon-width: 48px;
+  --pdfb-sidebar-panel-width: 280px;
+  --pdfb-right-panel-width: 280px;
+  --pdfb-canvas-page-width: 794px;
+  --pdfb-floating-toolbar-height: 36px;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   Dark Theme
+   Applied when the root element has data-pdfb-theme="dark"
+   ═══════════════════════════════════════════════════════════════ */
+[data-pdfb-theme="dark"] {
+  /* Backgrounds */
+  --pdfb-color-bg: #111111;
+  --pdfb-color-canvas-bg: #0d0d0d;
+  --pdfb-color-sidebar-bg: #1a1a1a;
+  --pdfb-color-toolbar-bg: #111111;
+  --pdfb-color-panel-bg: #1a1a1a;
+  --pdfb-color-panel-border: #2a2a2a;
+
+  /* Surface (inputs, cards) */
+  --pdfb-color-surface: #222222;
+  --pdfb-color-surface-hover: #2a2a2a;
+  --pdfb-color-surface-2: #1e1e1e;
+
+  /* Accent — Rausch Red (unchanged) */
+  --pdfb-color-accent-light: rgba(255, 56, 92, 0.2);
+  --pdfb-color-accent-subtle: rgba(255, 56, 92, 0.1);
+
+  /* Semantic lights (inverted) */
+  --pdfb-color-danger-light: rgba(193, 53, 21, 0.15);
+  --pdfb-color-success-light: rgba(34, 197, 94, 0.12);
+  --pdfb-color-warning-light: rgba(245, 158, 11, 0.12);
+
+  /* Text */
+  --pdfb-color-text-primary: #e2e2e2;
+  --pdfb-color-text-secondary: #888888;
+  --pdfb-color-text-disabled: #555555;
+
+  /* Borders */
+  --pdfb-border-color: #2a2a2a;
+  --pdfb-border-color-hover: #3a3a3a;
+
+  /* Tree (on dark panel) */
+  --pdfb-tree-text: #888888;
+  --pdfb-tree-text-hover: #e2e2e2;
+  --pdfb-tree-text-selected: #ff385c;
+  --pdfb-tree-bg-hover: rgba(255, 56, 92, 0.1);
+  --pdfb-tree-bg-selected: rgba(255, 56, 92, 0.18);
+  --pdfb-tree-header-text: #555555;
+
+  /* Shadows (more visible on dark) */
+  --pdfb-shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.3);
+  --pdfb-shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
+  --pdfb-shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.5);
+  --pdfb-shadow-page: 0 4px 32px rgba(0, 0, 0, 0.5);
+}

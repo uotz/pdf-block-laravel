@@ -1,0 +1,9 @@
+docs/
+src/
+public/
+*.config.ts
+*.config.js
+tsconfig*.json
+components.json
+.eslintrc*
+node_modules/
