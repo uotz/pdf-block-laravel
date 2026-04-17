@@ -6,9 +6,9 @@ import { useDroppable } from '@dnd-kit/core';
 import { CSS } from '@dnd-kit/utilities';
 import {
   Lock, Plus, Type, Image, Minus, SquareMousePointer,
-  MoveVertical, SeparatorHorizontal,
+  MoveVertical, ImagePlay,
 } from 'lucide-react';
-import { useEditorStore } from '../../store';
+import { useEditorStore, createStructure, createContentBlock, createBannerStructure, createStripe } from '../../store';
 import { blockStylesToCSS, backgroundToCSS } from '../../utils';
 import { FloatingToolbar } from '../FloatingToolbar';
 import { t } from '../../i18n';
@@ -26,7 +26,11 @@ const QUICK_TYPES: { type: string; label: string; icon: React.ReactNode }[] = [
   { type: 'divider',   label: 'Divisor',  icon: <Minus size={15} /> },
   { type: 'button',    label: 'Botão',    icon: <SquareMousePointer size={15} /> },
   { type: 'spacer',    label: 'Espaço',   icon: <MoveVertical size={15} /> },
-  { type: 'pagebreak', label: 'Quebra',   icon: <SeparatorHorizontal size={15} /> },
+];
+
+const QUICK_STRUCTURE_TYPES: typeof QUICK_TYPES = [
+  ...QUICK_TYPES,
+  { type: 'banner',    label: 'Banner',   icon: <ImagePlay size={15} /> },
 ];
 
 function QuickAddButton({ stripeId, structureId, columnId, insertAtIndex, visible }: {
@@ -36,6 +40,7 @@ function QuickAddButton({ stripeId, structureId, columnId, insertAtIndex, visibl
   // ALL hooks must be called unconditionally before any early return.
   const [open, setOpen] = useState(false);
   const addContentBlock = useEditorStore(s => s.addContentBlock);
+  const addStructure    = useEditorStore(s => s.addStructure);
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -59,10 +64,14 @@ function QuickAddButton({ stripeId, structureId, columnId, insertAtIndex, visibl
       </button>
       {open && (
         <div className="pdfb-quick-add-popover" onClick={e => e.stopPropagation()}>
-          {QUICK_TYPES.map(({ type, label, icon }) => (
+          {QUICK_STRUCTURE_TYPES.map(({ type, label, icon }) => (
             <button key={type} type="button" className="pdfb-quick-add-item"
               onClick={() => {
-                addContentBlock(stripeId, structureId, columnId, type as any, insertAtIndex);
+                if (type === 'banner') {
+                  addStructure(stripeId, createBannerStructure());
+                } else {
+                  addContentBlock(stripeId, structureId, columnId, type as any, insertAtIndex);
+                }
                 setOpen(false);
               }} title={label}>
               {icon}
@@ -101,6 +110,32 @@ function ResizeHandle({ direction, onDelta, onResizeEnd }: {
   return (
     <div className={`pdfb-resize-handle pdfb-resize-handle--${direction}`}
       onMouseDown={handleMouseDown} />
+  );
+}
+
+// ─── Quick-add structure between structures ───────────────────
+function QuickAddStripeButton({ currentStripeIndex, insertBefore, visible }: {
+  currentStripeIndex: number; insertBefore: boolean; visible: boolean;
+}) {
+  const addStripe = useEditorStore(s => s.addStripe);
+
+  if (!visible) return null;
+
+  const handleClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const newStripe = createStripe([createStructure([100])]);
+    const position = insertBefore ? currentStripeIndex : currentStripeIndex + 1;
+    addStripe(newStripe, position);
+  };
+
+  return (
+    <div className="pdfb-quick-add-btn pdfb-quick-add-structure">
+      <button type="button" className="pdfb-quick-add-trigger"
+        onClick={handleClick}
+        title={insertBefore ? "Adicionar faixa acima" : "Adicionar faixa abaixo"}>
+        <Plus size={12} />
+      </button>
+    </div>
   );
 }
 
@@ -280,9 +315,10 @@ function StructureRenderer({ structure, stripeId, onCopy }: {
     selectBlock(structure.id, [stripeId, structure.id]);
   }, [structure.id, stripeId, selectBlock]);
 
-  const { attributes, listeners } = useSortable({
+  const { attributes, listeners, setNodeRef: structureRef, transform: structureTransform, transition: structureTransition, isDragging: structureIsDragging } = useSortable({
     id: `structure-${structure.id}`,
-    disabled: true,
+    disabled: effectiveLocked,
+    data: { type: 'structure', stripeId },
   });
 
   const bannerBgStyle: React.CSSProperties = isBanner ? {
@@ -298,6 +334,10 @@ function StructureRenderer({ structure, stripeId, onCopy }: {
   return (
     // Propagate effective lock to all children
     <ParentLockedCtx.Provider value={effectiveLocked}>
+      <div
+        ref={structureRef}
+        style={{ transform: CSS.Transform.toString(structureTransform), transition: structureTransition, opacity: structureIsDragging ? 0.35 : 1 }}
+      >
       <div
         className={`pdfb-canvas-block pdfb-structure-block${isBanner ? ' pdfb-banner-structure' : ''} ${isSelected ? 'selected' : ''}`}
         onClick={handleClick}
@@ -348,6 +388,7 @@ function StructureRenderer({ structure, stripeId, onCopy }: {
           ))}
         </div>
       </div>
+      </div>
     </ParentLockedCtx.Provider>
   );
 }
@@ -361,9 +402,9 @@ export function StripeRenderer({ stripe, index, onCopy }: {
   const isSelected  = selectedId === stripe.id;
   const isLocked    = stripe.meta.locked;
 
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+  const { setNodeRef } = useSortable({
     id: stripe.id,
-    disabled: isLocked,
+    disabled: true,
     data: { type: 'stripe' },
   });
 
@@ -384,8 +425,7 @@ export function StripeRenderer({ stripe, index, onCopy }: {
   };
 
   return (
-    <div ref={setNodeRef}
-      style={{ transform: CSS.Transform.toString(transform), transition, opacity: isDragging ? 0.35 : 1 }}>
+    <div ref={setNodeRef}>
       {/* Propagate stripe lock to all descendants */}
       <ParentLockedCtx.Provider value={isLocked}>
         <div
@@ -416,17 +456,24 @@ export function StripeRenderer({ stripe, index, onCopy }: {
               <>
                 <span className="pdfb-block-label">{t('block.stripe')}</span>
                 <FloatingToolbar blockId={stripe.id} blockType="stripe" stripeId={stripe.id}
-                  dragListeners={listeners as Record<string, unknown>} dragAttributes={attributes}
                   onCopy={() => onCopy?.(stripe.id)} />
               </>
             )
           )}
 
           <div style={stripeStyle}>
-            {stripe.children.map(structure => (
-              <StructureRenderer key={structure.id} structure={structure}
-                stripeId={stripe.id} onCopy={id => onCopy?.(id)} />
-            ))}
+            <SortableContext items={stripe.children.map(s => `structure-${s.id}`)} strategy={verticalListSortingStrategy}>
+              <QuickAddStripeButton currentStripeIndex={index} insertBefore={true}
+                visible={!isLocked && isSelected} />
+              {stripe.children.map((structure, idx) => (
+                <React.Fragment key={structure.id}>
+                  <StructureRenderer structure={structure}
+                    stripeId={stripe.id} onCopy={id => onCopy?.(id)} />
+                </React.Fragment>
+              ))}
+              <QuickAddStripeButton currentStripeIndex={index} insertBefore={false}
+                visible={!isLocked && isSelected} />
+            </SortableContext>
           </div>
         </div>
       </ParentLockedCtx.Provider>

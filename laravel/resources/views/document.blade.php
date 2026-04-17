@@ -13,6 +13,8 @@
   $contentBg = $globalStyles['contentBackground'] ?? '#ffffff';
   $defaultColor = $globalStyles['defaultFontColor'] ?? '#333333';
   $defaultFont  = $pageSettings['defaultFontFamily'] ?? 'Inter, sans-serif';
+  $defaultFontSize = $globalStyles['defaultFontSize'] ?? 16;
+  $blockquoteBorderColor = $globalStyles['blockquoteBorderColor'] ?? '#e0e0e0';
 
   // Page margins in px — same formula as React's mmToPx (round(mm * 96/25.4, 2)).
   // We apply these as body padding so the full paper-width viewport is used and
@@ -67,6 +69,7 @@
       background: {{ $pageBg }};
       padding: {{ $padTop }}px {{ $padRight }}px {{ $padBottom }}px {{ $padLeft }}px;
       font-family: {{ $defaultFont }};
+      font-size: {{ $defaultFontSize }}px;
       color: {{ $defaultColor }};
       -webkit-print-color-adjust: exact;
       print-color-adjust: exact;
@@ -111,7 +114,7 @@
     .pdfb-tiptap ol  { padding-left: 1.5em; margin: 0.4em 0; }
     .pdfb-tiptap li  { margin: 0.15em 0; white-space: pre-wrap; }
     .pdfb-tiptap blockquote {
-      border-left: 3px solid #5b8cff;
+      border-left: 3px solid {{ $blockquoteBorderColor }};
       padding-left: 1em;
       margin: 0.4em 0;
       color: #6b6b80;

@@ -155,6 +155,8 @@ export function openPrintWindow(pageElement: HTMLElement, doc: Document): void {
         margin: 0 !important;
         padding: 0 !important;
         font-family: ${doc.pageSettings.defaultFontFamily || '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'};
+        font-size: ${doc.globalStyles.defaultFontSize || 16}px;
+        color: ${doc.globalStyles.defaultFontColor || '#333333'};
       }
 
       #pdfb-print-mount .pdfb-page,

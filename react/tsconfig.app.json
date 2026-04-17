@@ -9,6 +9,7 @@
     "moduleResolution": "bundler",
     "noEmit": true,
     "noImplicitAny": false,
+    "resolveJsonModule": true,
     "strict": true,
     "strictNullChecks": false,
     "noUnusedLocals": false,

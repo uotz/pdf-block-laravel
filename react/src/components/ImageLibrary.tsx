@@ -1,6 +1,9 @@
 /**
  * Image Library — in-memory store + modal UI for managing uploaded images.
  *
+ * Persistence is handled via pluggable adapters (ImageLibraryAdapter).
+ * Default: localStorage. Override via PDFBuilderConfig.imageLibraryAdapter.
+ *
  * Developers can provide a custom upload hook via `config.onUploadImage`.
  * Without it the editor stores images as base64 data-URLs (works out of the
  * box, no backend needed).
@@ -18,26 +21,22 @@ import { useEditorConfig } from './EditorConfig';
 import { ConfirmDialog } from './ui/ConfirmDialog';
 import { uid } from '../utils';
 import type { ImageBlock } from '../types';
+import type { LibraryImage, ImageLibraryAdapter } from '../imageLibrary';
+import { localStorageImageLibraryAdapter } from '../imageLibrary';
 
-// ─── Types ───────────────────────────────────────────────────
-export interface LibraryImage {
-  id: string;
-  /** Display name (file name without extension) */
-  name: string;
-  /** The URL used in <img> src — either a data-URL or a remote URL */
-  url: string;
-  /** Original file MIME type */
-  mimeType: string;
-  /** File size in bytes (0 for remote URLs) */
-  size: number;
-  addedAt: string;
-}
+// Re-export the type so existing consumers keep working
+export type { LibraryImage } from '../imageLibrary';
 
 interface LibraryStore {
   images: LibraryImage[];
+  /** Add an image to the in-memory store (call after persisting via adapter). */
   add(img: LibraryImage): void;
+  /** Replace an image URL in the in-memory store. */
   replace(id: string, newUrl: string, name?: string): void;
+  /** Remove an image from the in-memory store. */
   remove(id: string): void;
+  /** Replace the entire image list (used on initial load from adapter). */
+  setAll(images: LibraryImage[]): void;
 }
 
 // ─── Global singleton ─────────────────────────────────────────
@@ -64,6 +63,10 @@ const libraryStore: LibraryStore = {
     _images = _images.filter(img => img.id !== id);
     notifyListeners();
   },
+  setAll(images) {
+    _images = [...images];
+    notifyListeners();
+  },
 };
 
 function useLibraryImages(): LibraryImage[] {
@@ -79,6 +82,8 @@ function useLibraryImages(): LibraryImage[] {
 // ─── Context (for open/close) ─────────────────────────────────
 interface LibraryCtxValue {
   openLibrary: (opts?: LibraryOpenOptions) => void;
+  /** The resolved adapter instance for persistence. */
+  adapter: ImageLibraryAdapter;
 }
 
 export interface LibraryOpenOptions {
@@ -88,7 +93,7 @@ export interface LibraryOpenOptions {
   onSelect?: (url: string) => void;
 }
 
-const LibraryCtx = createContext<LibraryCtxValue>({ openLibrary: () => {} });
+const LibraryCtx = createContext<LibraryCtxValue>({ openLibrary: () => {}, adapter: localStorageImageLibraryAdapter });
 
 export function useImageLibrary() {
   return useContext(LibraryCtx);
@@ -130,6 +135,7 @@ interface ModalProps {
 function ImageLibraryModal({ targetBlockId, onSelect, onClose }: ModalProps) {
   const images = useLibraryImages();
   const config = useEditorConfig();
+  const { adapter } = useImageLibrary();
   const updateContentBlock = useEditorStore(s => s.updateContentBlock);
   const allBlocks = useEditorStore(s => s.document.blocks);
 
@@ -152,23 +158,35 @@ function ImageLibraryModal({ targetBlockId, onSelect, onClose }: ModalProps) {
     setUploading(true);
     try {
       for (const file of Array.from(files)) {
-        const img = await processFile(file, config.onUploadImage);
-        libraryStore.add(img);
-        setSelectedId(img.id);
+        const processed = await processFile(file, config.onUploadImage);
+        // Persist via adapter, then sync in-memory store
+        const saved = await adapter.save({
+          name: processed.name,
+          url: processed.url,
+          mimeType: processed.mimeType,
+          size: processed.size,
+        });
+        libraryStore.add(saved);
+        setSelectedId(saved.id);
       }
     } finally {
       setUploading(false);
     }
-  }, [config.onUploadImage]);
+  }, [config.onUploadImage, adapter]);
 
   // Replace an existing library image and update all canvas blocks that reference it
   const handleReplace = useCallback(async (files: FileList | null, imgId: string) => {
     if (!files || files.length === 0) return;
     setUploading(true);
     try {
-      const img = await processFile(files[0], config.onUploadImage);
+      const processed = await processFile(files[0], config.onUploadImage);
       const oldImg = _images.find(i => i.id === imgId);
-      libraryStore.replace(imgId, img.url, img.name);
+
+      // Persist via adapter, then sync in-memory store
+      if (adapter.replace) {
+        await adapter.replace(imgId, processed.url, processed.name);
+      }
+      libraryStore.replace(imgId, processed.url, processed.name);
 
       // Update every canvas image block pointing to the old URL
       if (oldImg) {
@@ -177,7 +195,7 @@ function ImageLibraryModal({ targetBlockId, onSelect, onClose }: ModalProps) {
             for (const column of structure.columns) {
               for (const block of column.children) {
                 if (block.type === 'image' && (block as ImageBlock).src === oldImg.url) {
-                  updateContentBlock(block.id, { src: img.url } as Partial<ImageBlock>);
+                  updateContentBlock(block.id, { src: processed.url } as Partial<ImageBlock>);
                 }
               }
             }
@@ -188,7 +206,7 @@ function ImageLibraryModal({ targetBlockId, onSelect, onClose }: ModalProps) {
       setUploading(false);
       setReplacingId(null);
     }
-  }, [config.onUploadImage, allBlocks, updateContentBlock]);
+  }, [config.onUploadImage, allBlocks, updateContentBlock, adapter]);
 
   // Delete an image from the library
   const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
@@ -197,12 +215,14 @@ function ImageLibraryModal({ targetBlockId, onSelect, onClose }: ModalProps) {
     setDeleteTargetId(imgId);
   }, []);
 
-  const handleDeleteConfirm = useCallback(() => {
+  const handleDeleteConfirm = useCallback(async () => {
     if (!deleteTargetId) return;
+    // Persist via adapter, then sync in-memory store
+    await adapter.delete(deleteTargetId);
     libraryStore.remove(deleteTargetId);
     if (selectedId === deleteTargetId) setSelectedId(null);
     setDeleteTargetId(null);
-  }, [deleteTargetId, selectedId]);
+  }, [deleteTargetId, selectedId, adapter]);
 
   // Select and apply to target block or custom callback
   const handleSelect = useCallback((img: LibraryImage) => {
@@ -381,8 +401,21 @@ function ImageLibraryModal({ targetBlockId, onSelect, onClose }: ModalProps) {
 
 // ─── Provider ─────────────────────────────────────────────────
 export function ImageLibraryProvider({ children }: { children: React.ReactNode }) {
+  const config = useEditorConfig();
   const [open, setOpen] = useState(false);
   const [opts, setOpts] = useState<LibraryOpenOptions | undefined>();
+
+  const adapter: ImageLibraryAdapter = config.imageLibraryAdapter ?? localStorageImageLibraryAdapter;
+
+  // Load images from adapter on mount
+  useEffect(() => {
+    adapter.list().then(images => {
+      libraryStore.setAll(images);
+    }).catch(err => {
+      console.error('[pdf-block] Failed to load image library:', err);
+    });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [adapter]);
 
   const openLibrary = useCallback((options?: LibraryOpenOptions) => {
     setOpts(options);
@@ -390,7 +423,7 @@ export function ImageLibraryProvider({ children }: { children: React.ReactNode }
   }, []);
 
   return (
-    <LibraryCtx.Provider value={{ openLibrary }}>
+    <LibraryCtx.Provider value={{ openLibrary, adapter }}>
       {children}
       {open && (
         <ImageLibraryModal

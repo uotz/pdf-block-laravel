@@ -7,7 +7,6 @@ export const BLOCK_DEFINITIONS: BlockDefinition[] = [
   { type: 'button', labelKey: 'block.button', icon: 'SquareMousePointer', category: 'content', defaultProps: () => ({}), draggable: true },
   { type: 'divider', labelKey: 'block.divider', icon: 'Minus', category: 'content', defaultProps: () => ({}), draggable: true },
   { type: 'spacer', labelKey: 'block.spacer', icon: 'MoveVertical', category: 'content', defaultProps: () => ({}), draggable: true },
-  { type: 'banner', labelKey: 'block.banner', icon: 'ImagePlay', category: 'media', defaultProps: () => ({}), draggable: true },
   { type: 'table', labelKey: 'block.table', icon: 'Table', category: 'content', defaultProps: () => ({}), draggable: true },
   { type: 'qrcode', labelKey: 'block.qrcode', icon: 'QrCode', category: 'advanced', defaultProps: () => ({}), draggable: true },
   { type: 'chart', labelKey: 'block.chart', icon: 'BarChart3', category: 'advanced', defaultProps: () => ({}), draggable: true },
@@ -60,6 +59,7 @@ export interface SidebarItem {
 export const SIDEBAR_ITEMS: SidebarItem[] = [
   { key: 'tree',    icon: 'Layers', labelKey: 'sidebar.tree',    action: 'panel', panel: 'tree'    },
   { key: 'modules', icon: 'Puzzle', labelKey: 'sidebar.modules', action: 'panel', panel: 'modules' },
+  { key: 'templates', icon: 'FileText', labelKey: 'sidebar.templates', action: 'panel', panel: 'templates' },
   { key: 'sep-panels', icon: '', labelKey: '', action: 'separator' },
   { key: 'layouts', icon: 'LayoutGrid', labelKey: 'sidebar.layouts', action: 'panel', panel: 'layouts' },
   { key: 'text', icon: 'Type', labelKey: 'sidebar.text', action: 'block', blockType: 'text' },

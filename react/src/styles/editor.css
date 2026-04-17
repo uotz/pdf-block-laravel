@@ -670,6 +670,7 @@
 }
 
 .pdfb-tab {
+  flex: 1;
   padding: var(--pdfb-space-2) var(--pdfb-space-4);
   font-size: var(--pdfb-font-size-sm);
   font-family: inherit;
@@ -679,6 +680,7 @@
   cursor: pointer;
   border-bottom: 2px solid transparent;
   transition: all var(--pdfb-transition-base);
+  text-align: center;
 }
 .pdfb-tab:hover {
   color: var(--pdfb-color-text-primary);
@@ -1416,6 +1418,22 @@
   border-color: var(--pdfb-color-accent);
   cursor: text;
 }
+.pdfb-toolbar-reset-btn {
+  border: none;
+  background: none;
+  padding: 2px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--pdfb-color-text-secondary);
+  opacity: 0.6;
+  transition: opacity 0.15s ease;
+}
+.pdfb-toolbar-reset-btn:hover {
+  opacity: 1;
+  color: var(--pdfb-color-text-primary);
+}
 /* Blinking cursor shown when fake-input is in editing mode */
 .pdfb-font-size-cursor {
   display: inline-block;
@@ -1710,7 +1728,7 @@
   margin: 0.4em 0;
 }
 .pdfb-root .ProseMirror blockquote {
-  border-left: 3px solid var(--pdfb-color-accent);
+  border-left: 3px solid #e0e0e0;
   padding-left: 1em;
   margin: 0.4em 0;
   color: var(--pdfb-color-text-secondary);
@@ -3520,4 +3538,74 @@
 }
 .pdfb-confirm-btn--danger:hover {
   background: #a02d10;
+}
+
+/* ─── Templates Panel ──────────────────────────────────────── */
+.pdfb-sidebar-panel-header {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  font-weight: 600;
+  font-size: var(--pdfb-font-size-sm);
+  border-bottom: 1px solid var(--pdfb-border-color);
+}
+
+.pdfb-template-section-label {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--pdfb-color-text-secondary);
+  padding: 8px 4px 4px;
+}
+
+.pdfb-template-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px;
+  border-radius: var(--pdfb-radius-sm);
+  gap: 8px;
+}
+.pdfb-template-card:hover {
+  background: var(--pdfb-color-surface-hover);
+}
+
+.pdfb-template-card-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  flex: 1;
+}
+
+.pdfb-template-card-name {
+  font-size: var(--pdfb-font-size-sm);
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pdfb-template-card-desc {
+  font-size: 11px;
+  color: var(--pdfb-color-text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pdfb-template-card-badge {
+  font-size: 9px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--pdfb-color-accent);
+}
+
+.pdfb-template-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
 }

@@ -10,7 +10,7 @@ import type { ImageBlock, ContentAlign } from '../../types';
 export function ImageProperties({ block }: { block: ImageBlock }) {
   const updateContentBlock = useEditorStore(s => s.updateContentBlock);
   const config = useEditorConfig();
-  const { openLibrary } = useImageLibrary();
+  const { openLibrary, adapter } = useImageLibrary();
   const update = (updates: Partial<ImageBlock>) => updateContentBlock(block.id, updates);
 
   const fileRef = useRef<HTMLInputElement>(null);
@@ -21,15 +21,21 @@ export function ImageProperties({ block }: { block: ImageBlock }) {
     if (!file) return;
     setUploading(true);
     try {
-      const img = await processFile(file, config.onUploadImage);
-      libraryStore.add(img);
-      update({ src: img.url });
+      const processed = await processFile(file, config.onUploadImage);
+      const saved = await adapter.save({
+        name: processed.name,
+        url: processed.url,
+        mimeType: processed.mimeType,
+        size: processed.size,
+      });
+      libraryStore.add(saved);
+      update({ src: saved.url });
     } finally {
       setUploading(false);
       e.target.value = '';
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [config.onUploadImage, block.id]);
+  }, [config.onUploadImage, block.id, adapter]);
 
   return (
     <div>

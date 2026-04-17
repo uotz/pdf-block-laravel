@@ -1,4 +1,5 @@
 import React from 'react';
+import { X } from 'lucide-react';
 import { useEditorStore } from '../../store';
 import { t } from '../../i18n';
 import { ColorPicker } from '../ui/ColorPicker';
@@ -73,6 +74,7 @@ const TEXT_TRANSFORM_OPTS = [
 export function TextProperties({ block }: { block: TextBlock }) {
   const updateContentBlock = useEditorStore(s => s.updateContentBlock);
   const defaultFontColor = useEditorStore(s => s.document.globalStyles.defaultFontColor);
+  const defaultFontSize  = useEditorStore(s => s.document.globalStyles.defaultFontSize ?? 16);
   const update = (updates: Partial<TextBlock>) => updateContentBlock(block.id, updates);
 
   return (
@@ -80,12 +82,24 @@ export function TextProperties({ block }: { block: TextBlock }) {
       <Accordion title={t('props.font')}>
         <Slider
           label={t('props.fontSize')}
-          value={block.fontSize}
-          onChange={v => update({ fontSize: v })}
+          value={block.fontSize ?? defaultFontSize}
+          onChange={v => update({ fontSize: v === defaultFontSize ? undefined : v })}
           min={8}
           max={120}
           unit="px"
         />
+        {block.fontSize !== undefined && (
+          <button
+            type="button"
+            className="pdfb-toolbar-btn"
+            style={{ fontSize: 11, padding: '4px 8px', marginTop: 6, width: '100%' }}
+            onClick={() => update({ fontSize: undefined })}
+            title="Usar tamanho padrão da página"
+          >
+            <X size={12} />
+            Usar tamanho padrão ({defaultFontSize}px)
+          </button>
+        )}
         <FontWeightPicker
           value={block.fontWeight}
           onChange={v => update({ fontWeight: v as FontWeight })}

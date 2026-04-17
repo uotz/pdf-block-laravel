@@ -27,7 +27,7 @@ export function StructureProperties({ structure, stripeId }: { structure: Struct
   const removeColumn = useEditorStore(s => s.removeColumn);
   const updateColumnWidth = useEditorStore(s => s.updateColumnWidth);
   const config = useEditorConfig();
-  const { openLibrary } = useImageLibrary();
+  const { openLibrary, adapter } = useImageLibrary();
 
   const isBanner = structure.variant === 'banner';
   const fileRef = useRef<HTMLInputElement>(null);
@@ -41,15 +41,21 @@ export function StructureProperties({ structure, stripeId }: { structure: Struct
     if (!file) return;
     setUploading(true);
     try {
-      const img = await processFile(file, config.onUploadImage);
-      libraryStore.add(img);
-      update({ backgroundImage: img.url });
+      const processed = await processFile(file, config.onUploadImage);
+      const saved = await adapter.save({
+        name: processed.name,
+        url: processed.url,
+        mimeType: processed.mimeType,
+        size: processed.size,
+      });
+      libraryStore.add(saved);
+      update({ backgroundImage: saved.url });
     } finally {
       setUploading(false);
       e.target.value = '';
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [config.onUploadImage, structure.id]);
+  }, [config.onUploadImage, structure.id, adapter]);
 
   // Handle interactive column count change
   const handleColumnCountChange = useCallback((count: number) => {
@@ -81,6 +87,18 @@ export function StructureProperties({ structure, stripeId }: { structure: Struct
       {isBanner && (
         <>
           <div className="pdfb-panel-header">Banner</div>
+
+          <Accordion title="Altura mínima" defaultOpen>
+            <NumberInput
+              label="Altura mínima"
+              value={structure.minHeight ?? 300}
+              onChange={v => update({ minHeight: v })}
+              min={60}
+              max={2000}
+              step={5}
+              unit="px"
+            />
+          </Accordion>
 
           <Accordion title="Imagem de fundo" defaultOpen>
             <input
@@ -141,16 +159,8 @@ export function StructureProperties({ structure, stripeId }: { structure: Struct
               </button>
             </div>
 
-            <NumberInput
-              label="Altura mínima"
-              value={structure.minHeight ?? 300}
-              onChange={v => update({ minHeight: v })}
-              min={60}
-              max={2000}
-              step={5}
-              unit="px"
-            />
-
+            {structure.backgroundImage && (
+            <>
             <SegmentedControl
               label="Tamanho"
               value={structure.backgroundSize ?? 'cover'}
@@ -200,6 +210,8 @@ export function StructureProperties({ structure, stripeId }: { structure: Struct
               iconOnly
               options={positionOptions}
             />
+            </>
+            )}
           </Accordion>
 
           <Accordion title="Overlay" defaultOpen>

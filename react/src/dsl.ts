@@ -115,7 +115,7 @@ export type BlockType =
   | 'chart'
   | 'pagebreak';
 
-export type ContentBlockType = Exclude<BlockType, 'stripe' | 'structure'>;
+export type ContentBlockType = Exclude<BlockType, 'stripe' | 'structure' | 'banner'>;
 
 // ─── Alinhamentos ─────────────────────────────────────────────
 
@@ -176,7 +176,8 @@ export interface TextBlock extends BaseBlock {
   type: 'text';
   /** TipTap JSON content */
   content: Record<string, unknown>;
-  fontSize: number;
+  /** When undefined, inherits from globalStyles.defaultFontSize */
+  fontSize?: number;
   fontWeight: FontWeight;
   fontColor: string;
   lineHeight: number;
@@ -236,23 +237,6 @@ export interface SpacerBlock extends BaseBlock {
   height: number;
 }
 
-// ─── Banner ───────────────────────────────────────────────────
-
-export interface BannerBlock extends BaseBlock {
-  type: 'banner';
-  imageUrl: string;
-  overlayColor: string;
-  overlayOpacity: number;
-  title: string;
-  subtitle: string;
-  titleFontSize: number;
-  titleColor: string;
-  subtitleFontSize: number;
-  subtitleColor: string;
-  height: number;
-  alignment: ContentAlign;
-}
-
 // ─── Table ────────────────────────────────────────────────────
 
 export interface TableBlock extends BaseBlock {
@@ -306,7 +290,6 @@ export type ContentBlock =
   | ButtonBlock
   | DividerBlock
   | SpacerBlock
-  | BannerBlock
   | TableBlock
   | QRCodeBlock
   | ChartBlock
@@ -329,6 +312,10 @@ export interface GlobalStyles {
   defaultFontFamily?: string;
   /** Tamanho de fonte padrão em px */
   defaultFontSize?: number;
+  /** Cor padrão da borda de blockquotes */
+  blockquoteBorderColor?: string;
+  /** Cor de fundo padrão do banner */
+  bannerBackground?: string;
 }
 
 // ─── Page Settings ────────────────────────────────────────────
@@ -412,6 +399,7 @@ export const DEFAULT_GLOBAL_STYLES: GlobalStyles = {
   pageBackground: '#ffffff',
   contentBackground: '#ffffff',
   defaultFontColor: '#333333',
+  blockquoteBorderColor: '#e0e0e0',
 };
 
 export const DEFAULT_PAGE_SETTINGS: PageSettings = {

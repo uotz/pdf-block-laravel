@@ -4,6 +4,7 @@ import {
   Puzzle, GripVertical, Clipboard, Eye, EyeOff,
 } from 'lucide-react';
 import { useEditorStore } from '../store';
+import { useModules } from '../hooks/useModules';
 import { t } from '../i18n';
 import type { BlockType } from '../types';
 
@@ -33,9 +34,10 @@ export function FloatingToolbar({
   const moveContentBlock      = useEditorStore(s => s.moveContentBlock);
   const duplicateContentBlock = useEditorStore(s => s.duplicateContentBlock);
   const removeContentBlock    = useEditorStore(s => s.removeContentBlock);
+  const removeStructure       = useEditorStore(s => s.removeStructure);
   const updateBlockMeta       = useEditorStore(s => s.updateBlockMeta);
   const blocks                = useEditorStore(s => s.document.blocks);
-  const saveAsModule          = useEditorStore(s => s.saveAsModule);
+  const { saveModule }        = useModules();
 
   const block = (() => {
     for (const stripe of blocks) {
@@ -110,9 +112,9 @@ export function FloatingToolbar({
   const handleDelete = useCallback(() => {
     if (isLocked) return;
     if (isStripe)     { removeStripe(blockId); return; }
-    if (isStructure)  { removeStripe(stripeId); return; }
+    if (isStructure)  { removeStructure(stripeId, blockId); return; }
     removeContentBlock(blockId);
-  }, [blockId, isStripe, isStructure, isLocked, removeStripe, removeContentBlock, stripeId]);
+  }, [blockId, isStripe, isStructure, isLocked, removeStripe, removeStructure, removeContentBlock, stripeId]);
 
   const handleToggleLock = useCallback(() => {
     updateBlockMeta(blockId, { locked: !isLocked });
@@ -120,8 +122,8 @@ export function FloatingToolbar({
 
   const handleSaveModule = useCallback(() => {
     const name = prompt('Nome do módulo:');
-    if (name) saveAsModule(stripeId, name);
-  }, [stripeId, saveAsModule]);
+    if (name) saveModule(name, stripeId);
+  }, [stripeId, saveModule]);
 
   return (
     <div className="pdfb-floating-toolbar" onClick={e => e.stopPropagation()}>

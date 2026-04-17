@@ -118,7 +118,6 @@ export function EditorShell({
   toolbarActions,
 }: EditorShellProps) {
   const blocks          = useEditorStore(s => s.document.blocks);
-  const moveStripe      = useEditorStore(s => s.moveStripe);
   const addStripe       = useEditorStore(s => s.addStripe);
   const addContentBlock = useEditorStore(s => s.addContentBlock);
   const moveContentBlock = useEditorStore(s => s.moveContentBlock);
@@ -250,15 +249,8 @@ export function EditorShell({
       return;
     }
 
-    // ── 3. Stripe reorder ────────────────────────────────────────
-    if (active.id !== over.id) {
-      const oldIdx = blocks.findIndex(b => b.id === active.id);
-      const newIdx = blocks.findIndex(b => b.id === over.id);
-      if (oldIdx !== -1 && newIdx !== -1) {
-        moveStripe(active.id as string, newIdx);
-      }
-    }
-  }, [blocks, moveStripe, addStripe, addContentBlock, moveContentBlock]);
+    // ── 3. Stripe reorder (disabled — use up/down arrows) ────────
+  }, [blocks, addStripe, addContentBlock, moveContentBlock]);
 
   // Drag ghost
   const renderGhost = () => {

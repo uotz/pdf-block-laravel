@@ -10,10 +10,23 @@ export { useDocument } from './hooks/useDocument';
 export { useSelection } from './hooks/useSelection';
 export { useEditor } from './hooks/useEditor';
 export { useExport } from './hooks/useExport';
+export { useTemplates } from './hooks/useTemplates';
+export { useModules } from './hooks/useModules';
+
+// ─── Templates ────────────────────────────────────────────────
+export { localStorageTemplateAdapter } from './templates';
+export type { Template, TemplateAdapter } from './templates';
+export { BUILTIN_TEMPLATES } from './templates/index';
+
+// ─── Modules ──────────────────────────────────────────────────
+export { localStorageModuleAdapter } from './modules';
+export type { Module, ModuleAdapter } from './modules';
 
 // ─── Image Library ────────────────────────────────────────────
 export { useImageLibrary, processFile, libraryStore } from './components/ImageLibrary';
-export type { LibraryImage, LibraryOpenOptions } from './components/ImageLibrary';
+export type { LibraryOpenOptions } from './components/ImageLibrary';
+export { localStorageImageLibraryAdapter } from './imageLibrary';
+export type { LibraryImage, ImageLibraryAdapter } from './imageLibrary';
 
 // ─── Store (advanced usage) ───────────────────────────────────
 export { useEditorStore, createDefaultDocument, createDefaultPageSettings, createDefaultGlobalStyles } from './store';
@@ -43,7 +56,6 @@ export type {
   ButtonBlock,
   DividerBlock,
   SpacerBlock,
-  BannerBlock,
   TableBlock,
   QRCodeBlock,
   ChartBlock,

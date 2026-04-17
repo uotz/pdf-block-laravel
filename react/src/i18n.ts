@@ -33,6 +33,7 @@ const ptBR: TranslationMap = {
   'sidebar.modules': 'Módulos',
   'sidebar.styles': 'Estilos Globais',
   'sidebar.tree': 'Árvore de componentes',
+  'sidebar.templates': 'Templates',
   'sidebar.search': 'Buscar blocos...',
 
   // Block types
@@ -191,6 +192,25 @@ const ptBR: TranslationMap = {
   'misc.mm': 'mm',
   'misc.linked': 'Valores vinculados',
   'misc.unlinked': 'Valores independentes',
+
+  // Templates
+  'templates.saveTitle': 'Salvar como template',
+  'templates.name': 'Nome',
+  'templates.namePlaceholder': 'Nome do template',
+  'templates.description': 'Descrição',
+  'templates.descriptionPlaceholder': 'Descrição opcional',
+  'templates.save': 'Salvar',
+  'templates.saveBtn': 'Salvar atual',
+  'templates.cancel': 'Cancelar',
+  'templates.apply': 'Usar',
+  'templates.delete': 'Excluir',
+  'templates.builtIn': 'Pré-definido',
+  'templates.builtInSection': 'Pré-definidos',
+  'templates.userSection': 'Meus templates',
+  'templates.empty': 'Nenhum template salvo',
+  'templates.loading': 'Carregando...',
+  'templates.confirmTitle': 'Aplicar template',
+  'templates.confirmMessage': 'O documento atual será substituído pelo template selecionado. Deseja continuar?',
 };
 
 const en: TranslationMap = {
@@ -221,6 +241,7 @@ const en: TranslationMap = {
   'sidebar.timer': 'Timer',
   'sidebar.modules': 'Modules',
   'sidebar.styles': 'Global Styles',
+  'sidebar.templates': 'Templates',
   'sidebar.search': 'Search blocks...',
 
   'block.stripe': 'Stripe',
@@ -366,6 +387,25 @@ const en: TranslationMap = {
   'misc.mm': 'mm',
   'misc.linked': 'Linked values',
   'misc.unlinked': 'Independent values',
+
+  // Templates
+  'templates.saveTitle': 'Save as template',
+  'templates.name': 'Name',
+  'templates.namePlaceholder': 'Template name',
+  'templates.description': 'Description',
+  'templates.descriptionPlaceholder': 'Optional description',
+  'templates.save': 'Save',
+  'templates.saveBtn': 'Save current',
+  'templates.cancel': 'Cancel',
+  'templates.apply': 'Use',
+  'templates.delete': 'Delete',
+  'templates.builtIn': 'Built-in',
+  'templates.builtInSection': 'Built-in',
+  'templates.userSection': 'My templates',
+  'templates.empty': 'No templates saved',
+  'templates.loading': 'Loading...',
+  'templates.confirmTitle': 'Apply template',
+  'templates.confirmMessage': 'The current document will be replaced by the selected template. Continue?',
 };
 
 const translations: Record<Locale, TranslationMap> = { 'pt-BR': ptBR, en };

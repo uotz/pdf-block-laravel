@@ -110,7 +110,8 @@ export function RightPanel() {
   const tabs = [
     { key: 'config', label: t('panel.config') },
     { key: 'styles', label: t('panel.styles') },
-    { key: 'data', label: 'Página' },
+    // TODO: Revisar e reativar a tab "Página" no futuro
+    // { key: 'data', label: 'Página' },
   ];
 
   const { upId, downId } = findNavIds(blocks, selectedId);
@@ -162,7 +163,8 @@ export function RightPanel() {
           <div style={{ flex: 1, overflowY: 'auto' }}>
             {activeTab === 'config' && <ConfigPanel block={block} stripeId={stripeId} />}
             {activeTab === 'styles' && <CommonStylesPanel block={block} />}
-            {activeTab === 'data' && <PageBreakPanel block={block} />}
+            {/* TODO: Revisar e reativar a tab "Página" no futuro */}
+            {/* {activeTab === 'data' && <PageBreakPanel block={block} />} */}
           </div>
         </>
       )}

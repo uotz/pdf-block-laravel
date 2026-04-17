@@ -12,8 +12,17 @@ declare module '@tiptap/core' {
 
 // ─── ColoredBlockquote ────────────────────────────────────────
 // Extends TipTap's default Blockquote node with an optional left-border colour.
+// Accepts `defaultBorderColor` via `.configure({ defaultBorderColor: '#ccc' })`.
 export const ColoredBlockquote = Blockquote.extend({
+  addOptions() {
+    return {
+      ...(this.parent?.() ?? {}),
+      defaultBorderColor: null,
+    } as any;
+  },
+
   addAttributes() {
+    const defaultColor = (this.options as any).defaultBorderColor as string | null;
     return {
       ...(this.parent?.() ?? {}),
       borderColor: {
@@ -21,10 +30,11 @@ export const ColoredBlockquote = Blockquote.extend({
         parseHTML: (el: HTMLElement) =>
           el.getAttribute('data-border-color') || null,
         renderHTML: (attrs: Record<string, string | null>) => {
-          if (!attrs.borderColor) return {};
+          const color = attrs.borderColor || defaultColor;
+          if (!color) return {};
           return {
-            'data-border-color': attrs.borderColor,
-            style: `border-left-color: ${attrs.borderColor}`,
+            'data-border-color': attrs.borderColor || '',
+            style: `border-left-color: ${color}`,
           };
         },
       },

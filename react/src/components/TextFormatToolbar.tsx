@@ -4,7 +4,7 @@ import {
   Bold, Italic, Underline as UnderlineIcon, Strikethrough,
   List, ListOrdered, Link as LinkIcon, Heading1, Heading2, Heading3,
   AlignLeft, AlignCenter, AlignRight, AlignJustify, RemoveFormatting,
-  Quote, Baseline, CaseSensitive,
+  Quote, Baseline, CaseSensitive, X,
 } from 'lucide-react';
 import { HexColorPicker } from 'react-colorful';
 import { useActiveEditor } from './ActiveEditorContext';
@@ -466,8 +466,24 @@ export function TextFormatToolbar() {
         >
           {fontSizeEditing ? (localFontSize || ' ') : (currentFontSizePx || '–')}
           {fontSizeEditing && <span className="pdfb-font-size-cursor" aria-hidden="true" />}
-        </div>
-      </div>
+        </div>        <button
+          type="button"
+          className="pdfb-toolbar-reset-btn"
+          title="Usar tamanho padrão da página"
+          onMouseDown={e => {
+            e.preventDefault();
+            e.stopPropagation();
+            if (activeEditor && activeBlockId && updateContentBlock) {
+              if (!activeEditor.state.selection.empty) {
+                activeEditor.chain().unsetFontSize().run();
+              } else {
+                updateContentBlock(activeBlockId, { fontSize: undefined } as Partial<TextBlock>);
+              }
+            }
+          }}
+        >
+          <X size={11} />
+        </button>      </div>
 
       <span className="pdfb-bubble-sep" />
 

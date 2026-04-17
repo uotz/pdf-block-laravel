@@ -177,6 +177,7 @@ export function CanvasArea({ onCopy }: { onCopy?: (blockId: string) => void }) {
               // No background here — the padding zone represents the page margin
               // and must remain transparent so pageBackground (on .pdfb-page) shows through.
               fontFamily: doc.pageSettings.defaultFontFamily || undefined,
+              fontSize: doc.globalStyles.defaultFontSize || 16,
               color: doc.globalStyles.defaultFontColor || undefined,
               outline: isOver ? '2px dashed var(--pdfb-color-accent)' : undefined,
               minHeight: '100%',

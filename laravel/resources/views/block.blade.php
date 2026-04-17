@@ -19,9 +19,6 @@
   @case('spacer')
     @include('pdf-block::blocks.spacer', ['block' => $block])
     @break
-  @case('banner')
-    @include('pdf-block::blocks.banner', ['block' => $block])
-    @break
   @case('table')
     @include('pdf-block::blocks.table', ['block' => $block])
     @break

@@ -132,10 +132,19 @@ export function PageSettingsPanel() {
           value={pageSettings.defaultFontFamily}
           onChange={v => updatePageSettings({ defaultFontFamily: v })}
         />
+        <NumberInput
+          label="Tamanho da fonte padrão"
+          value={globalStyles.defaultFontSize ?? 16}
+          onChange={v => updateGlobalStyles({ defaultFontSize: v })}
+          min={8}
+          max={72}
+          step={1}
+          unit="px"
+        />
       </Accordion>
 
       {/* ─── Cores ─── */}
-      <Accordion title="Cores de fundo" defaultOpen={false}>
+      <Accordion title="Cores de fundo">
         <ColorPicker
           label="Fundo da página"
           value={globalStyles.pageBackground || '#ffffff'}
@@ -168,6 +177,16 @@ export function PageSettingsPanel() {
           label="Cor padrão do texto"
           value={globalStyles.defaultFontColor || '#333333'}
           onChange={v => updateGlobalStyles({ defaultFontColor: v })}
+        />
+        <ColorPicker
+          label="Cor da borda de citações"
+          value={globalStyles.blockquoteBorderColor || '#e0e0e0'}
+          onChange={v => updateGlobalStyles({ blockquoteBorderColor: v })}
+        />
+        <ColorPicker
+          label="Fundo padrão do banner"
+          value={globalStyles.bannerBackground || '#0d1b3e'}
+          onChange={v => updateGlobalStyles({ bannerBackground: v })}
         />
       </Accordion>
     </div>

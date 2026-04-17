@@ -2,18 +2,23 @@ import React from 'react';
 import { useEditorStore } from '../../store';
 import { t } from '../../i18n';
 import { ColorPicker } from '../ui/ColorPicker';
-import { NumberInput } from '../ui/NumberInput';
-import { Accordion, EdgeInput, SegmentedControl } from '../ui/Controls';
+import { Accordion, EdgeInput, SegmentedControl, Slider } from '../ui/Controls';
 import type { StripeBlock, ContentAlign, SolidBackground } from '../../types';
+import { getContentAreaPx } from '../../utils';
+import { Maximize2 } from 'lucide-react';
 
 export function StripeProperties({ stripe }: { stripe: StripeBlock }) {
   const updateStripe = useEditorStore(s => s.updateStripe);
   const updateBlockStyles = useEditorStore(s => s.updateBlockStyles);
+  const pageSettings = useEditorStore(s => s.document.pageSettings);
   const update = (updates: Partial<StripeBlock>) => updateStripe(stripe.id, updates);
 
   const bgColor = stripe.styles.background.type === 'solid'
     ? (stripe.styles.background as SolidBackground).color
     : 'transparent';
+
+  const maxWidth = Math.round(getContentAreaPx(pageSettings).width);
+  const isFullWidth = stripe.contentMaxWidth === 0;
 
   return (
     <div>
@@ -28,14 +33,30 @@ export function StripeProperties({ stripe }: { stripe: StripeBlock }) {
       </Accordion>
 
       <Accordion title="Layout">
-        <NumberInput
-          label={t('stripe.contentWidth')}
-          value={stripe.contentMaxWidth}
-          onChange={v => update({ contentMaxWidth: v })}
-          min={200}
-          max={1200}
-          unit="px"
-        />
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
+          <button
+            type="button"
+            className={`pdfb-toolbar-btn${isFullWidth ? ' pdfb-toolbar-btn--active' : ''}`}
+            style={{ fontSize: 11, padding: '3px 8px', height: 'auto', display: 'flex', alignItems: 'center', gap: 4 }}
+            onClick={() => update({ contentMaxWidth: isFullWidth ? Math.round(maxWidth * 0.8) : 0 })}
+            title={isFullWidth ? 'Definir largura personalizada' : 'Largura total disponível'}
+          >
+            <Maximize2 size={12} />
+            {isFullWidth ? 'Largura total' : 'Usar tudo'}
+          </button>
+        </div>
+        {!isFullWidth && (
+          <Slider
+            label={t('stripe.contentWidth')}
+            value={stripe.contentMaxWidth}
+            onChange={v => update({ contentMaxWidth: v })}
+            min={200}
+            max={maxWidth}
+            step={1}
+            unit="px"
+          />
+        )}
+        {!isFullWidth && (
         <SegmentedControl
           label={t('stripe.contentAlign')}
           value={stripe.contentAlignment}
@@ -67,6 +88,7 @@ export function StripeProperties({ stripe }: { stripe: StripeBlock }) {
             },
           ]}
         />
+        )}
       </Accordion>
 
       <Accordion title={t('props.padding')}>

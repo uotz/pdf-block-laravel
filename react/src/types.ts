@@ -25,7 +25,7 @@ export type {
   BlockType, ContentBlockType,
   BaseBlock, StripeBlock, Column, StructureBlock,
   TextBlock, ImageBlock, ButtonBlock, DividerBlock, SpacerBlock,
-  BannerBlock, TableBlock, QRCodeBlock, ChartBlock, PageBreakBlock,
+  TableBlock, QRCodeBlock, ChartBlock, PageBreakBlock,
   ContentBlock, AnyBlock,
 
   // Alignment & typography
@@ -120,6 +120,28 @@ export interface PDFBuilderConfig {
    * minimap: { position: 'bottom-left', width: 140 }
    */
   minimap?: boolean | MinimapConfig;
+  /**
+   * Built-in templates shown in the templates panel.
+   * These are read-only and cannot be deleted by the user.
+   */
+  templates?: import('./templates').Template[];
+  /**
+   * Custom adapter for persisting user templates.
+   * Defaults to `localStorageTemplateAdapter`.
+   *
+   * @see packages/react/docs/templates.md
+   */
+  templateAdapter?: import('./templates').TemplateAdapter;
+  /**
+   * Custom adapter for persisting saved modules (stripe blocks).
+   * Defaults to `localStorageModuleAdapter`.
+   */
+  moduleAdapter?: import('./modules').ModuleAdapter;
+  /**
+   * Custom adapter for persisting the image library.
+   * Defaults to `localStorageImageLibraryAdapter`.
+   */
+  imageLibraryAdapter?: import('./imageLibrary').ImageLibraryAdapter;
 }
 
 export interface PDFBuilderCallbacks {
@@ -138,6 +160,7 @@ export type SidebarPanel =
   | 'layouts'
   | 'modules'
   | 'styles'
+  | 'templates'
   | 'tree';
 
 export type RightPanelTab = 'config' | 'styles' | 'data';

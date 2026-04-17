@@ -2,7 +2,7 @@ import { useState, useCallback } from 'react';
 import { useDraggable } from '@dnd-kit/core';
 import {
   LayoutGrid, Type, Image, Minus, SquareMousePointer, MoveVertical,
-  ImagePlay, Table, QrCode, BarChart3, SeparatorHorizontal, Puzzle, Layers,
+  ImagePlay, Table, QrCode, BarChart3, SeparatorHorizontal, Puzzle, Layers, FileText,
 } from 'lucide-react';
 import { useEditorStore } from '../store';
 import { createStripe, createStructure, createContentBlock, createBannerStructure } from '../store';
@@ -13,10 +13,12 @@ import { t } from '../i18n';
 import type { SidebarPanel, BlockType } from '../types';
 import type { LucideIcon } from 'lucide-react';
 import { FontPicker } from './ui/FontPicker';
+import { TemplatesPanel } from './TemplatesPanel';
+import { useModules } from '../hooks/useModules';
 
 const ICON_MAP: Record<string, LucideIcon> = {
   LayoutGrid, Type, Image, Minus, SquareMousePointer, MoveVertical,
-  ImagePlay, Table, QrCode, BarChart3, SeparatorHorizontal, Puzzle, Layers,
+  ImagePlay, Table, QrCode, BarChart3, SeparatorHorizontal, Puzzle, Layers, FileText,
 };
 
 // ─── Draggable Block Icon ────────────────────────────────────
@@ -173,14 +175,16 @@ function LayoutsPanel() {
 
 // ─── Modules Panel ────────────────────────────────────────────
 function ModulesPanel() {
-  const modules = useEditorStore(s => s.modules);
-  const addFromModule = useEditorStore(s => s.addFromModule);
-  const removeModule = useEditorStore(s => s.removeModule);
+  const { modules, loading, deleteModule, applyModule } = useModules();
 
   return (
     <div>
       <div className="pdfb-sidebar-panel-header">{t('sidebar.modules')}</div>
-      {modules.length === 0 ? (
+      {loading ? (
+        <div style={{ padding: 16, textAlign: 'center', color: 'var(--pdfb-color-text-secondary)', fontSize: 12 }}>
+          Carregando módulos…
+        </div>
+      ) : modules.length === 0 ? (
         <div style={{ padding: 16, textAlign: 'center', color: 'var(--pdfb-color-text-secondary)', fontSize: 12 }}>
           Nenhum módulo salvo. Selecione uma faixa e salve como módulo.
         </div>
@@ -192,7 +196,7 @@ function ModulesPanel() {
               <button
                 className="pdfb-toolbar-btn"
                 style={{ color: 'var(--pdfb-color-accent)', fontSize: 11, padding: '2px 8px', height: 'auto' }}
-                onClick={() => addFromModule(mod.id)}
+                onClick={() => applyModule(mod)}
                 type="button"
               >
                 Usar
@@ -200,7 +204,7 @@ function ModulesPanel() {
               <button
                 className="pdfb-toolbar-btn"
                 style={{ color: 'var(--pdfb-color-danger)', fontSize: 11, padding: '2px 4px', height: 'auto' }}
-                onClick={() => removeModule(mod.id)}
+                onClick={() => deleteModule(mod.id)}
                 type="button"
               >
                 x
@@ -279,11 +283,12 @@ function GlobalStylesPanel() {
 // ─── Panel Content Router ─────────────────────────────────────
 function PanelContent({ panel }: { panel: SidebarPanel }) {
   switch (panel) {
-    case 'layouts': return <LayoutsPanel />;
-    case 'modules': return <ModulesPanel />;
-    case 'styles':  return <GlobalStylesPanel />;
-    case 'tree':    return <ComponentTree inPanel />;
-    default:        return null;
+    case 'layouts':   return <LayoutsPanel />;
+    case 'modules':   return <ModulesPanel />;
+    case 'styles':    return <GlobalStylesPanel />;
+    case 'templates': return <TemplatesPanel />;
+    case 'tree':      return <ComponentTree inPanel />;
+    default:          return null;
   }
 }
 

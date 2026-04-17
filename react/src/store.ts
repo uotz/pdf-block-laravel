@@ -15,6 +15,8 @@ export function createDefaultGlobalStyles(): GlobalStyles {
     pageBackground: '#ffffff',
     contentBackground: '#ffffff',
     defaultFontColor: '#333333',
+    defaultFontSize: 16,
+    bannerBackground: '#0d1b3e',
   };
 }
 
@@ -86,8 +88,21 @@ export function createStructure(columnWidths?: number[]): StructureBlock {
 }
 
 export function createBannerStructure(): StructureBlock {
+  const bannerText = createContentBlock('text');
+  Object.assign(bannerText, {
+    content: { type: 'doc', content: [{ type: 'heading', attrs: { level: 2 }, content: [{ type: 'text', text: 'Banner' }] }] },
+    fontSize: 28,
+    fontWeight: 700,
+    fontColor: '#ffffff',
+    textAlign: 'center',
+  });
+  const struct = createStructure([100]);
+  struct.columns[0].children = [bannerText];
+  // Use page-level banner background if available
+  const bannerBg = useEditorStore.getState?.()?.document?.globalStyles?.bannerBackground || '#0d1b3e';
+  struct.styles.background = { type: 'solid', color: bannerBg };
   return {
-    ...createStructure([100]),
+    ...struct,
     variant: 'banner',
     verticalAlignment: 'center',
     backgroundImage: '',
@@ -107,7 +122,7 @@ export function createContentBlock(type: BlockType): ContentBlock {
       return {
         ...base, type: 'text',
         content: { type: 'doc', content: [{ type: 'paragraph', content: [{ type: 'text', text: 'Digite seu texto aqui...' }] }] },
-        fontSize: 14, fontWeight: 400, fontColor: '',
+        fontWeight: 400, fontColor: '',
         lineHeight: 1.6, letterSpacing: 0, textAlign: 'left', textTransform: 'none',
       };
     case 'image':
@@ -122,7 +137,7 @@ export function createContentBlock(type: BlockType): ContentBlock {
         ...base, type: 'button',
         styles: { ...defaultStyles(), margin: { top: 15, right: 0, bottom: 15, left: 0 } },
         text: 'Clique aqui', url: '#', target: '_blank', fullWidth: false,
-        fontSize: 14, fontWeight: 600, fontColor: '#ffffff',
+        fontSize: 16, fontWeight: 600, fontColor: '#ffffff',
         bgColor: '#5b8cff', borderColor: '#5b8cff', borderWidth: 0,
         borderRadius: { topLeft: 6, topRight: 6, bottomRight: 6, bottomLeft: 6 },
         paddingH: 24, paddingV: 12,
@@ -136,15 +151,6 @@ export function createContentBlock(type: BlockType): ContentBlock {
       };
     case 'spacer':
       return { ...base, type: 'spacer', height: 24 };
-    case 'banner':
-      return {
-        ...base, type: 'banner',
-        imageUrl: '', overlayColor: 'rgba(0,0,0,0.4)', overlayOpacity: 0.4,
-        title: 'Título do Banner', subtitle: 'Subtítulo',
-        titleFontSize: 32, titleColor: '#ffffff',
-        subtitleFontSize: 16, subtitleColor: '#ffffff',
-        height: 300, alignment: 'center',
-      };
     case 'table':
       return {
         ...base, type: 'table',
@@ -178,7 +184,7 @@ export function createContentBlock(type: BlockType): ContentBlock {
     case 'pagebreak':
       return { ...base, type: 'pagebreak' };
     default:
-      return { ...base, type: 'text', content: {}, fontSize: 14, fontWeight: 400, fontColor: '', lineHeight: 1.6, letterSpacing: 0, textAlign: 'left', textTransform: 'none' } as ContentBlock;
+      return { ...base, type: 'text', content: {}, fontWeight: 400, fontColor: '', lineHeight: 1.6, letterSpacing: 0, textAlign: 'left', textTransform: 'none' } as ContentBlock;
   }
 }
 
@@ -249,6 +255,7 @@ export interface EditorStore {
   duplicateStripe(stripeId: string): void;
 
   addStructure(stripeId: string, structure?: StructureBlock, position?: number): void;
+  removeStructure(stripeId: string, structureId: string): void;
   updateStructure(stripeId: string, structureId: string, updates: Partial<StructureBlock>): void;
   moveStructure(stripeId: string, structureId: string, newIndex: number): void;
 
@@ -301,7 +308,7 @@ function findBlock(blocks: StripeBlock[], blockId: string): { block: AnyBlock; p
   return null;
 }
 
-function deepCloneBlock<T extends AnyBlock>(block: T): T {
+export function deepCloneBlock<T extends AnyBlock>(block: T): T {
   const clone = JSON.parse(JSON.stringify(block)) as T;
   clone.id = uid();
   if ('children' in clone && Array.isArray((clone as StripeBlock).children)) {
@@ -540,6 +547,24 @@ export const useEditorStore = create<EditorStore>()(
         if (!stripe) return;
         const idx = position != null ? position : stripe.children.length;
         stripe.children.splice(idx, 0, newStructure);
+        s.document.updatedAt = new Date().toISOString();
+      }));
+      get()._pushHistory();
+      get()._callbacks.onDocumentChange?.(get().document);
+    },
+
+    removeStructure(stripeId, structureId) {
+      set(produce((s: EditorStore) => {
+        const stripe = s.document.blocks.find(b => b.id === stripeId);
+        if (!stripe) return;
+        stripe.children = stripe.children.filter(c => c.id !== structureId);
+        if (s.selection.blockId === structureId) {
+          s.selection = { blockId: null, path: [] };
+        }
+        // If stripe has no structures left, remove the stripe entirely
+        if (stripe.children.length === 0) {
+          s.document.blocks = s.document.blocks.filter(b => b.id !== stripeId);
+        }
         s.document.updatedAt = new Date().toISOString();
       }));
       get()._pushHistory();
@@ -877,7 +902,30 @@ export const useEditorStore = create<EditorStore>()(
       // ── Helper: is this block a stripe? ──
       const isStripe = doc.blocks.some(s => s.id === sourceId);
       if (isStripe) {
-        get().duplicateStripe(sourceId);
+        // If a stripe (or block inside a stripe) is currently selected,
+        // insert the copy after that stripe; otherwise duplicate in-place.
+        let targetIdx = doc.blocks.findIndex(b => b.id === sourceId);
+        if (selectedId) {
+          // Find which stripe the selected block belongs to
+          const selStripeIdx = doc.blocks.findIndex(stripe => {
+            if (stripe.id === selectedId) return true;
+            return stripe.children.some(st =>
+              st.id === selectedId ||
+              st.columns.some(col => col.children.some(cb => cb.id === selectedId))
+            );
+          });
+          if (selStripeIdx !== -1) targetIdx = selStripeIdx;
+        }
+        const srcIdx = doc.blocks.findIndex(b => b.id === sourceId);
+        if (srcIdx !== -1) {
+          set(produce((s: EditorStore) => {
+            const clone = deepCloneBlock(s.document.blocks[srcIdx]);
+            s.document.blocks.splice(targetIdx + 1, 0, clone);
+            s.document.updatedAt = new Date().toISOString();
+          }));
+          get()._pushHistory();
+          get()._callbacks.onDocumentChange?.(get().document);
+        }
         return;
       }
 

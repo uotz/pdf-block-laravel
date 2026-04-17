@@ -23,16 +23,16 @@
       $bgPos = $structure['backgroundPosition'] ?? 'center';
       $minH = $structure['minHeight'] ?? 200;
       $overlayColor = $structure['overlayColor'] ?? 'rgba(0,0,0,0.4)';
-      $overlayOpacity = $structure['overlayOpacity'] ?? 0.4;
+      $overlayOpacity = $structure['overlayOpacity'] ?? 0;
       
-      $outerStyle .= "position:relative;min-height:{$minH}px;";
+      $outerStyle .= "position:relative;min-height:{$minH}px;overflow:hidden;";
       if ($bgImg) {
           $outerStyle .= "background-image:url(" . e($bgImg) . ");background-size:{$bgSize};background-position:{$bgPos};";
       }
   }
 @endphp
 <div style="{{ $outerStyle }}">
-  @if($isBanner && !empty($bgImg))
+  @if($isBanner && ($overlayOpacity ?? 0) > 0)
     <div style="position:absolute;inset:0;background-color:{{ $overlayColor }};opacity:{{ $overlayOpacity }};"></div>
   @endif
   <div style="

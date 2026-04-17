@@ -18,7 +18,7 @@ import { t } from '../i18n';
 import { ActiveEditorCtx } from '../components/ActiveEditorContext';
 import type {
   ContentBlock, TextBlock, ImageBlock, ButtonBlock, DividerBlock,
-  SpacerBlock, BannerBlock, TableBlock, QRCodeBlock, ChartBlock,
+  SpacerBlock, TableBlock, QRCodeBlock, ChartBlock,
   PageBreakBlock,
 } from '../types';
 
@@ -27,6 +27,7 @@ export function TextBlockRenderer({ block }: { block: TextBlock }) {
   const updateContentBlock = useEditorStore(s => s.updateContentBlock);
   const { registerEditor, unregisterEditor } = useContext(ActiveEditorCtx);
   const isLocked = block.meta.locked;
+  const blockquoteBorderColor = useEditorStore(s => s.document.globalStyles.blockquoteBorderColor);
 
   const editor = useEditor({
     extensions: [
@@ -45,7 +46,7 @@ export function TextBlockRenderer({ block }: { block: TextBlock }) {
       Color,
       FontSize,
       LineHeight,
-      ColoredBlockquote,
+      ColoredBlockquote.configure({ defaultBorderColor: blockquoteBorderColor || null } as any),
     ],
     content: block.content as Record<string, unknown>,
     editable: !isLocked,
@@ -64,7 +65,7 @@ export function TextBlockRenderer({ block }: { block: TextBlock }) {
 
   const style: React.CSSProperties = {
     ...blockStylesToCSS(block.styles),
-    fontSize: block.fontSize,
+    fontSize: block.fontSize || undefined,
     fontWeight: block.fontWeight,
     color: block.fontColor || undefined,
     lineHeight: block.lineHeight,
@@ -211,39 +212,6 @@ export function SpacerBlockRenderer({ block }: { block: SpacerBlock }) {
       className="pdfb-block-spacer"
       style={{ ...blockStylesToCSS(block.styles), height: block.height }}
     />
-  );
-}
-
-// ─── Banner Block ─────────────────────────────────────────────
-export function BannerBlockRenderer({ block }: { block: BannerBlock }) {
-  const style = blockStylesToCSS(block.styles);
-
-  return (
-    <div
-      style={{
-        ...style,
-        height: block.height,
-        backgroundImage: block.imageUrl ? `url(${block.imageUrl})` : 'linear-gradient(135deg, #667eea, #764ba2)',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: block.alignment === 'left' ? 'flex-start' : block.alignment === 'right' ? 'flex-end' : 'center',
-        justifyContent: 'center',
-        padding: 24,
-        position: 'relative',
-      }}
-    >
-      <div style={{ position: 'absolute', inset: 0, backgroundColor: block.overlayColor, opacity: block.overlayOpacity }} />
-      <div style={{ position: 'relative', zIndex: 1, textAlign: block.alignment }}>
-        <div style={{ fontSize: block.titleFontSize, color: block.titleColor, fontWeight: 700, marginBottom: 8 }}>
-          {block.title}
-        </div>
-        <div style={{ fontSize: block.subtitleFontSize, color: block.subtitleColor }}>
-          {block.subtitle}
-        </div>
-      </div>
-    </div>
   );
 }
 
@@ -414,7 +382,6 @@ export function renderContentBlock(block: ContentBlock, isLocked = false): React
     case 'button':    return <ButtonBlockRenderer block={block} />;
     case 'divider':   return <DividerBlockRenderer block={block} />;
     case 'spacer':    return <SpacerBlockRenderer block={block} />;
-    case 'banner':    return <BannerBlockRenderer block={block} />;
     case 'table':     return <TableBlockRenderer block={block} isLocked={isLocked} />;
     case 'qrcode':    return <QRCodeBlockRenderer block={block} />;
     case 'chart':     return <ChartBlockRenderer block={block} />;

@@ -2,7 +2,7 @@
   use PdfBlock\Laravel\StyleHelpers as S;
   
   $style = S::blockStyles($block['styles'] ?? []) . implode('', array_filter([
-      "font-size:" . ($block['fontSize'] ?? 16) . "px;",
+      !empty($block['fontSize']) ? "font-size:{$block['fontSize']}px;" : '',
       "font-weight:" . ($block['fontWeight'] ?? 400) . ";",
       !empty($block['fontColor']) ? "color:{$block['fontColor']};" : '',
       ($block['lineHeight'] ?? null) ? "line-height:{$block['lineHeight']};" : '',
