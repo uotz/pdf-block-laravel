@@ -5,7 +5,6 @@
   $justify = S::justifyCSS($block['alignment'] ?? 'center');
 
   $btnStyle = implode('', [
-      "font-family:" . ($block['fontFamily'] ?? 'inherit') . ";",
       "font-size:" . ($block['fontSize'] ?? 16) . "px;",
       "font-weight:" . ($block['fontWeight'] ?? 600) . ";",
       "color:" . ($block['fontColor'] ?? '#ffffff') . ";",

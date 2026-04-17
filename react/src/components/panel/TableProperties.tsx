@@ -7,6 +7,7 @@ import type { TableBlock } from '../../types';
 
 export function TableProperties({ block }: { block: TableBlock }) {
   const updateContentBlock = useEditorStore(s => s.updateContentBlock);
+  const defaultFontColor = useEditorStore(s => s.document.globalStyles.defaultFontColor);
   const update = (updates: Partial<TableBlock>) =>
     updateContentBlock(block.id, updates as Parameters<typeof updateContentBlock>[1]);
 
@@ -70,14 +71,6 @@ export function TableProperties({ block }: { block: TableBlock }) {
 
       {/* ── Tipografia e células ── */}
       <Accordion title="Células">
-        <div className="pdfb-field">
-          <span className="pdfb-label">Fonte</span>
-          <input
-            className="pdfb-input"
-            value={block.fontFamily}
-            onChange={e => update({ fontFamily: e.target.value })}
-          />
-        </div>
         <NumberInput
           label="Tamanho da fonte"
           value={block.fontSize}
@@ -88,7 +81,7 @@ export function TableProperties({ block }: { block: TableBlock }) {
         />
         <ColorPicker
           label="Cor do texto"
-          value={block.fontColor}
+          value={block.fontColor || defaultFontColor}
           onChange={v => update({ fontColor: v })}
         />
         <NumberInput

@@ -80,14 +80,6 @@ export function ButtonProperties({ block }: { block: ButtonBlock }) {
 
       {/* ── Tipografia ── */}
       <Accordion title={t('props.font')}>
-        <div className="pdfb-field">
-          <span className="pdfb-label">{t('props.fontFamily')}</span>
-          <input
-            className="pdfb-input"
-            value={block.fontFamily}
-            onChange={e => update({ fontFamily: e.target.value })}
-          />
-        </div>
         <Slider
           label={t('props.fontSize')}
           value={block.fontSize}

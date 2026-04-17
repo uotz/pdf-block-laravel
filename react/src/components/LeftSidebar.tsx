@@ -12,6 +12,7 @@ import type { SidebarItem } from '../blocks/registry';
 import { t } from '../i18n';
 import type { SidebarPanel, BlockType } from '../types';
 import type { LucideIcon } from 'lucide-react';
+import { FontPicker } from './ui/FontPicker';
 
 const ICON_MAP: Record<string, LucideIcon> = {
   LayoutGrid, Type, Image, Minus, SquareMousePointer, MoveVertical,
@@ -243,10 +244,9 @@ function GlobalStylesPanel() {
         </div>
         <div className="pdfb-field">
           <span className="pdfb-label">{t('global.primaryFont')}</span>
-          <input
-            className="pdfb-input"
+          <FontPicker
             value={globalStyles.defaultFontFamily}
-            onChange={e => updateGlobalStyles({ defaultFontFamily: e.target.value })}
+            onChange={v => updateGlobalStyles({ defaultFontFamily: v })}
           />
         </div>
         <div className="pdfb-field">

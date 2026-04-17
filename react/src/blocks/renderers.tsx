@@ -64,10 +64,9 @@ export function TextBlockRenderer({ block }: { block: TextBlock }) {
 
   const style: React.CSSProperties = {
     ...blockStylesToCSS(block.styles),
-    fontFamily: block.fontFamily,
     fontSize: block.fontSize,
     fontWeight: block.fontWeight,
-    color: block.fontColor,
+    color: block.fontColor || undefined,
     lineHeight: block.lineHeight,
     letterSpacing: block.letterSpacing ? `${block.letterSpacing}px` : undefined,
     textAlign: block.textAlign,
@@ -152,7 +151,6 @@ export function ButtonBlockRenderer({ block }: { block: ButtonBlock }) {
   const justify = block.alignment === 'left' ? 'flex-start' : block.alignment === 'right' ? 'flex-end' : 'center';
 
   const btnStyle: React.CSSProperties = {
-    fontFamily: block.fontFamily,
     fontSize: block.fontSize,
     fontWeight: block.fontWeight,
     color: block.fontColor,
@@ -304,9 +302,8 @@ export function TableBlockRenderer({ block, isLocked = false }: { block: TableBl
   return (
     <div className="pdfb-block-table" style={style}>
       <table style={{
-        fontFamily: block.fontFamily,
         fontSize: block.fontSize,
-        color: block.fontColor,
+        color: block.fontColor || undefined,
         width: '100%',
         borderCollapse: 'collapse',
         tableLayout: 'fixed',

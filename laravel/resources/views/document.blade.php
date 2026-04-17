@@ -32,14 +32,31 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{{ e($doc['meta']['title'] ?? 'Document') }}</title>
   @php
-    // Extract a Google-Fonts-compatible font name from the CSS font-family string.
-    // e.g. 'Inter, sans-serif' → 'Inter'
-    $googleFont = trim(explode(',', $defaultFont)[0], "'\" ");
-    $googleFontUrl = 'https://fonts.googleapis.com/css2?family=' . rawurlencode($googleFont) . ':wght@100;200;300;400;500;600;700;800;900&display=swap';
+    // Collect the page-level default font for Google Fonts loading
+    $extractFont = fn(string $val): string => trim(explode(',', $val)[0], "'\" ");
+
+    $fontSet = [];
+    $fontSet[$extractFont($defaultFont)] = true;
+
+    // System/web-safe fonts that don't need Google Fonts loading
+    $systemFonts = ['Arial','Helvetica','Georgia','Times New Roman','Courier New','Verdana','Trebuchet MS','Impact'];
+
+    // Filter out system fonts and build a single Google Fonts URL
+    $googleFamilies = array_filter(array_keys($fontSet), fn($f) => $f && !in_array($f, $systemFonts));
+    $googleFontUrl = '';
+    if (!empty($googleFamilies)) {
+      $familyParams = array_map(
+        fn($f) => 'family=' . rawurlencode($f) . ':wght@100;200;300;400;500;600;700;800;900',
+        $googleFamilies
+      );
+      $googleFontUrl = 'https://fonts.googleapis.com/css2?' . implode('&', $familyParams) . '&display=swap';
+    }
   @endphp
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="{{ $googleFontUrl }}" rel="stylesheet">
+  @if($googleFontUrl)
+    <link href="{{ $googleFontUrl }}" rel="stylesheet">
+  @endif
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
     body {

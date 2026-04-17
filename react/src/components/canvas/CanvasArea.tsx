@@ -9,6 +9,7 @@ import { getPageDimensionsPx, getContentAreaPx, mmToPx } from '../../utils';
 import { computePageBreaks } from '../../export/pageBreaks';
 import { LayoutGrid } from 'lucide-react';
 import { createStripe, createStructure } from '../../store';
+import { loadGoogleFont } from '../ui/FontPicker';
 import type { StripeBlock } from '../../types';
 
 // ─── Page break band ─────────────────────────────────────────
@@ -109,6 +110,18 @@ export function CanvasArea({ onCopy }: { onCopy?: (blockId: string) => void }) {
   const marginBottomPx = mmToPx(doc.pageSettings.margins.bottom);
   const marginLeftPx   = mmToPx(doc.pageSettings.margins.left);
 
+  // Load all Google Fonts used in the document (page default + per-block)
+  useEffect(() => {
+    const fonts = new Set<string>();
+    const extract = (val: string) => {
+      const base = val?.split(',')[0]?.trim().replace(/^['"]|['"]$/g, '');
+      if (base) fonts.add(base);
+    };
+    extract(doc.pageSettings.defaultFontFamily);
+    if (doc.globalStyles.defaultFontFamily) extract(doc.globalStyles.defaultFontFamily);
+    fonts.forEach(f => loadGoogleFont(f));
+  }, [doc]);
+
   // Track measured heights of every stripe
   const [stripeHeights, setStripeHeights] = useState<Record<string, number>>({});
 
@@ -163,6 +176,7 @@ export function CanvasArea({ onCopy }: { onCopy?: (blockId: string) => void }) {
               padding: `${marginTopPx}px ${marginRightPx}px ${marginBottomPx}px ${marginLeftPx}px`,
               // No background here — the padding zone represents the page margin
               // and must remain transparent so pageBackground (on .pdfb-page) shows through.
+              fontFamily: doc.pageSettings.defaultFontFamily || undefined,
               color: doc.globalStyles.defaultFontColor || undefined,
               outline: isOver ? '2px dashed var(--pdfb-color-accent)' : undefined,
               minHeight: '100%',

@@ -12,9 +12,8 @@
 @endphp
 <div style="{{ $style }}">
   <table style="
-    font-family:{{ $block['fontFamily'] ?? 'inherit' }};
     font-size:{{ $block['fontSize'] ?? 14 }}px;
-    color:{{ $block['fontColor'] ?? 'inherit' }};
+    @if(!empty($block['fontColor']))color:{{ $block['fontColor'] }};@endif
     width:100%;
     border-collapse:collapse;
     table-layout:fixed;

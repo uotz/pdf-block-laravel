@@ -4,6 +4,7 @@ import { t } from '../../i18n';
 import { NumberInput } from '../ui/NumberInput';
 import { Select, SegmentedControl, Accordion, EdgeInput } from '../ui/Controls';
 import { ColorPicker } from '../ui/ColorPicker';
+import { FontPicker } from '../ui/FontPicker';
 import { PAPER_SIZES } from '../../types';
 import type { PaperPreset, Orientation } from '../../types';
 
@@ -126,11 +127,11 @@ export function PageSettingsPanel() {
       </Accordion>
 
       <Accordion title={t('global.primaryFont')}>
-        <div className="pdfb-field">
-          <span className="pdfb-label">{t('global.primaryFont')}</span>
-          <input className="pdfb-input" value={pageSettings.defaultFontFamily}
-            onChange={e => updatePageSettings({ defaultFontFamily: e.target.value })} />
-        </div>
+        <FontPicker
+          label={t('global.primaryFont')}
+          value={pageSettings.defaultFontFamily}
+          onChange={v => updatePageSettings({ defaultFontFamily: v })}
+        />
       </Accordion>
 
       {/* ─── Cores ─── */}

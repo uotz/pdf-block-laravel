@@ -107,7 +107,7 @@ export function createContentBlock(type: BlockType): ContentBlock {
       return {
         ...base, type: 'text',
         content: { type: 'doc', content: [{ type: 'paragraph', content: [{ type: 'text', text: 'Digite seu texto aqui...' }] }] },
-        fontFamily: 'Inter, sans-serif', fontSize: 14, fontWeight: 400, fontColor: '#333333',
+        fontSize: 14, fontWeight: 400, fontColor: '',
         lineHeight: 1.6, letterSpacing: 0, textAlign: 'left', textTransform: 'none',
       };
     case 'image':
@@ -122,7 +122,7 @@ export function createContentBlock(type: BlockType): ContentBlock {
         ...base, type: 'button',
         styles: { ...defaultStyles(), margin: { top: 15, right: 0, bottom: 15, left: 0 } },
         text: 'Clique aqui', url: '#', target: '_blank', fullWidth: false,
-        fontFamily: 'Inter, sans-serif', fontSize: 14, fontWeight: 600, fontColor: '#ffffff',
+        fontSize: 14, fontWeight: 600, fontColor: '#ffffff',
         bgColor: '#5b8cff', borderColor: '#5b8cff', borderWidth: 0,
         borderRadius: { topLeft: 6, topRight: 6, bottomRight: 6, bottomLeft: 6 },
         paddingH: 24, paddingV: 12,
@@ -156,7 +156,7 @@ export function createContentBlock(type: BlockType): ContentBlock {
         ],
         headerRow: true, headerBgColor: '#f0f0f5', headerFontColor: '#1a1a2e',
         cellPadding: 10, borderColor: '#e0e0ec', borderWidth: 1,
-        fontFamily: 'Inter, sans-serif', fontSize: 13, fontColor: '#333333',
+        fontSize: 13, fontColor: '',
         stripedRows: false, stripedColor: '#f8f9fd',
       };
     case 'qrcode':
@@ -178,7 +178,7 @@ export function createContentBlock(type: BlockType): ContentBlock {
     case 'pagebreak':
       return { ...base, type: 'pagebreak' };
     default:
-      return { ...base, type: 'text', content: {}, fontFamily: 'Inter, sans-serif', fontSize: 14, fontWeight: 400, fontColor: '#333333', lineHeight: 1.6, letterSpacing: 0, textAlign: 'left', textTransform: 'none' } as ContentBlock;
+      return { ...base, type: 'text', content: {}, fontSize: 14, fontWeight: 400, fontColor: '', lineHeight: 1.6, letterSpacing: 0, textAlign: 'left', textTransform: 'none' } as ContentBlock;
   }
 }
 

@@ -72,19 +72,12 @@ const TEXT_TRANSFORM_OPTS = [
 
 export function TextProperties({ block }: { block: TextBlock }) {
   const updateContentBlock = useEditorStore(s => s.updateContentBlock);
+  const defaultFontColor = useEditorStore(s => s.document.globalStyles.defaultFontColor);
   const update = (updates: Partial<TextBlock>) => updateContentBlock(block.id, updates);
 
   return (
     <div>
       <Accordion title={t('props.font')}>
-        <div className="pdfb-field">
-          <span className="pdfb-label">{t('props.fontFamily')}</span>
-          <input
-            className="pdfb-input"
-            value={block.fontFamily}
-            onChange={e => update({ fontFamily: e.target.value })}
-          />
-        </div>
         <Slider
           label={t('props.fontSize')}
           value={block.fontSize}
@@ -99,7 +92,7 @@ export function TextProperties({ block }: { block: TextBlock }) {
         />
         <ColorPicker
           label={t('props.fontColor')}
-          value={block.fontColor}
+          value={block.fontColor || defaultFontColor}
           onChange={v => update({ fontColor: v })}
         />
       </Accordion>

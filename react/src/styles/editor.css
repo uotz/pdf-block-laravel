@@ -781,6 +781,104 @@
   border-color: var(--pdfb-color-accent);
 }
 
+/* ─── Font Picker ───────────────────────────────────────────── */
+.pdfb-font-picker-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  height: 32px;
+  padding: 0 var(--pdfb-space-2);
+  border: 1px solid var(--pdfb-border-color);
+  border-radius: var(--pdfb-radius-sm);
+  font-size: var(--pdfb-font-size-sm);
+  background: var(--pdfb-color-surface);
+  color: var(--pdfb-color-text-primary);
+  cursor: pointer;
+  outline: none;
+  text-align: left;
+  gap: 4px;
+}
+.pdfb-font-picker-trigger:hover {
+  border-color: var(--pdfb-border-color-hover);
+}
+.pdfb-font-picker-trigger:focus {
+  border-color: var(--pdfb-color-accent);
+  box-shadow: var(--pdfb-shadow-focus);
+}
+.pdfb-font-picker-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+}
+.pdfb-font-picker-dropdown {
+  background: var(--pdfb-color-surface);
+  border: 1px solid var(--pdfb-border-color);
+  border-radius: var(--pdfb-radius-md);
+  box-shadow: var(--pdfb-shadow-lg);
+  overflow: hidden;
+}
+.pdfb-font-picker-search {
+  padding: 6px;
+  border-bottom: 1px solid var(--pdfb-border-color);
+}
+.pdfb-font-picker-search .pdfb-input {
+  width: 100%;
+  height: 28px;
+  font-size: 12px;
+}
+.pdfb-font-picker-list {
+  max-height: 240px;
+  overflow-y: auto;
+  padding: 4px 0;
+}
+.pdfb-font-picker-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 6px 10px;
+  border: none;
+  background: none;
+  color: var(--pdfb-color-text-primary);
+  font-size: 13px;
+  cursor: pointer;
+  text-align: left;
+  line-height: 1.4;
+}
+.pdfb-font-picker-item:hover,
+.pdfb-font-picker-item.highlighted {
+  background: var(--pdfb-color-surface-hover);
+}
+.pdfb-font-picker-item.active {
+  color: var(--pdfb-color-accent);
+  font-weight: 600;
+}
+.pdfb-font-picker-item-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.pdfb-font-picker-badge {
+  font-size: 9px;
+  font-family: var(--pdfb-font-family);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--pdfb-color-text-secondary);
+  background: var(--pdfb-color-surface-hover);
+  padding: 1px 5px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+.pdfb-font-picker-empty {
+  padding: 16px;
+  text-align: center;
+  color: var(--pdfb-color-text-secondary);
+  font-size: 12px;
+}
+/* Ensure the .pdfb-field wrapping a FontPicker has relative positioning
+   so the dropdown anchors correctly */
 /* ─── Toggle Switch ─────────────────────────────────────────── */
 .pdfb-toggle {
   position: relative;

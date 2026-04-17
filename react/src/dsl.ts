@@ -176,7 +176,6 @@ export interface TextBlock extends BaseBlock {
   type: 'text';
   /** TipTap JSON content */
   content: Record<string, unknown>;
-  fontFamily: string;
   fontSize: number;
   fontWeight: FontWeight;
   fontColor: string;
@@ -207,7 +206,6 @@ export interface ButtonBlock extends BaseBlock {
   url: string;
   target: '_self' | '_blank';
   fullWidth: boolean;
-  fontFamily: string;
   fontSize: number;
   fontWeight: FontWeight;
   fontColor: string;
@@ -266,7 +264,6 @@ export interface TableBlock extends BaseBlock {
   cellPadding: number;
   borderColor: string;
   borderWidth: number;
-  fontFamily: string;
   fontSize: number;
   fontColor: string;
   stripedRows: boolean;

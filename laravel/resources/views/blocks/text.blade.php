@@ -2,10 +2,9 @@
   use PdfBlock\Laravel\StyleHelpers as S;
   
   $style = S::blockStyles($block['styles'] ?? []) . implode('', array_filter([
-      "font-family:" . ($block['fontFamily'] ?? 'inherit') . ";",
       "font-size:" . ($block['fontSize'] ?? 16) . "px;",
       "font-weight:" . ($block['fontWeight'] ?? 400) . ";",
-      "color:" . ($block['fontColor'] ?? 'inherit') . ";",
+      !empty($block['fontColor']) ? "color:{$block['fontColor']};" : '',
       ($block['lineHeight'] ?? null) ? "line-height:{$block['lineHeight']};" : '',
       ($block['letterSpacing'] ?? null) ? "letter-spacing:{$block['letterSpacing']}px;" : '',
       "text-align:" . ($block['textAlign'] ?? 'left') . ";",
