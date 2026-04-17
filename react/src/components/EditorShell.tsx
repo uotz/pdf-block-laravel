@@ -30,8 +30,9 @@ interface EditorShellProps {
   showToolbar?: boolean;
   showSidebar?: boolean;
   showRightPanel?: boolean;
-  onExportPDF?: () => Promise<void> | void;
   onBack?: () => void;
+  /** Slot for extra toolbar actions */
+  toolbarActions?: React.ReactNode;
 }
 
 // ─── Preview Overlay ────────────────────────────────────────────
@@ -113,7 +114,8 @@ function CodeEditorOverlay({ onClose }: { onClose: () => void }) {
 // ─── Main Shell ─────────────────────────────────────────────────
 export function EditorShell({
   showToolbar = true, showSidebar = true, showRightPanel = true,
-  onExportPDF, onBack,
+  onBack,
+  toolbarActions,
 }: EditorShellProps) {
   const blocks          = useEditorStore(s => s.document.blocks);
   const moveStripe      = useEditorStore(s => s.moveStripe);
@@ -307,7 +309,7 @@ export function EditorShell({
     <ImageLibraryProvider>
     <ActiveEditorProvider>
       <div className="pdfb-root" data-pdfb-theme={theme}>
-        {showToolbar && <TopToolbar onExportPDF={onExportPDF} onBack={onBack} />}
+        {showToolbar && <TopToolbar onBack={onBack} toolbarActions={toolbarActions} />}
         <TextFormatToolbar />
         <DndContext
           sensors={sensors}

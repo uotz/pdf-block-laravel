@@ -239,7 +239,6 @@ export interface EditorStore {
   setTemplateGalleryOpen(open: boolean): void;
   setDragging(dragging: boolean, source?: 'sidebar' | 'canvas' | null): void;
   setZoom(zoom: number): void;
-  setExporting(exporting: boolean): void;
   setTheme(theme: 'light' | 'dark'): void;
 
   // Block mutations
@@ -339,7 +338,6 @@ export const useEditorStore = create<EditorStore>()(
       isDragging: false,
       dragSource: null,
       zoom: 100,
-      exporting: false,
       theme: 'light',
     },
     _history: [],
@@ -460,10 +458,6 @@ export const useEditorStore = create<EditorStore>()(
 
     setZoom(zoom) {
       set(produce((s: EditorStore) => { s.ui.zoom = zoom; }));
-    },
-
-    setExporting(exporting) {
-      set(produce((s: EditorStore) => { s.ui.exporting = exporting; }));
     },
 
     setTheme(theme) {

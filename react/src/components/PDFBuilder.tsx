@@ -2,7 +2,7 @@ import React, { useEffect, useImperativeHandle, forwardRef, useCallback, useRef 
 import { EditorShell } from './EditorShell';
 import { EditorConfigContext } from './EditorConfig';
 import { useEditorStore } from '../store';
-import { exportToPDF, downloadPDF, openPrintWindow } from '../export/pdf';
+import { openPrintWindow } from '../export/print';
 import { setLocale } from '../i18n';
 import '../styles/editor.css';
 import '../styles/print.css';
@@ -26,10 +26,15 @@ export interface PDFBuilderProps {
   className?: string;
   /** Custom inline style */
   style?: React.CSSProperties;
+  /**
+   * Slot for extra toolbar actions (rendered at the end of the toolbar).
+   * Receives getDocument() for convenience.
+   */
+  toolbarActions?: (getDocument: () => Document) => React.ReactNode;
 }
 
 export const PDFBuilder = forwardRef<PDFBuilderRef, PDFBuilderProps>(function PDFBuilder(
-  { initialDocument, config, callbacks, persistenceAdapter, onBack, className, style },
+  { initialDocument, config, callbacks, persistenceAdapter, onBack, className, style, toolbarActions },
   ref
 ) {
   const init = useEditorStore(s => s.init);
@@ -47,16 +52,6 @@ export const PDFBuilder = forwardRef<PDFBuilderRef, PDFBuilderProps>(function PD
     if (callbacks) setCallbacks(callbacks);
   }, [callbacks, setCallbacks]);
 
-  // Export handler (programmatic PDF download) — returns Promise so toolbar can show loading
-  const handleExportPDF = useCallback(async (): Promise<void> => {
-    const pageEl = document.querySelector('.pdfb-page') as HTMLElement;
-    if (!pageEl) return;
-    const doc = useEditorStore.getState().document;
-    const blob = await exportToPDF(pageEl, doc);
-    await downloadPDF(blob, `${doc.meta.title || 'document'}.pdf`);
-    callbacks?.onExport?.(blob);
-  }, [callbacks]);
-
   // Print handler (native browser print dialog in clean window)
   const handlePrint = useCallback(() => {
     const pageEl = document.querySelector('.pdfb-page') as HTMLElement;
@@ -64,6 +59,9 @@ export const PDFBuilder = forwardRef<PDFBuilderRef, PDFBuilderProps>(function PD
     const doc = useEditorStore.getState().document;
     openPrintWindow(pageEl, doc);
   }, []);
+
+  // Get document helper for toolbar slot
+  const getDocument = useCallback(() => useEditorStore.getState().document, []);
 
   // Keyboard shortcuts
   useEffect(() => {
@@ -105,7 +103,7 @@ export const PDFBuilder = forwardRef<PDFBuilderRef, PDFBuilderProps>(function PD
     };
     document.addEventListener('keydown', handler);
     return () => document.removeEventListener('keydown', handler);
-  }, [handleExportPDF, handlePrint]);
+  }, [handlePrint]);
 
   // Unified paste handler — covers both image paste and block paste.
   // Lives here so we can inspect clipboard data before deciding the action.
@@ -163,15 +161,6 @@ export const PDFBuilder = forwardRef<PDFBuilderRef, PDFBuilderProps>(function PD
 
   // Imperative handle
   useImperativeHandle(ref, () => ({
-    async exportPDF() {
-      const pageEl = document.querySelector('.pdfb-page') as HTMLElement;
-      if (!pageEl) throw new Error('Canvas not found');
-      return exportToPDF(pageEl, useEditorStore.getState().document);
-    },
-    async downloadPDF(filename) {
-      const blob = await this.exportPDF();
-      await downloadPDF(blob, filename || `${useEditorStore.getState().document.meta.title || 'document'}.pdf`);
-    },
     print() {
       const pageEl = document.querySelector('.pdfb-page') as HTMLElement;
       if (!pageEl) return;
@@ -226,8 +215,8 @@ export const PDFBuilder = forwardRef<PDFBuilderRef, PDFBuilderProps>(function PD
         showToolbar={config?.showToolbar !== false}
         showSidebar={config?.showSidebar !== false}
         showRightPanel={config?.showRightPanel !== false}
-        onExportPDF={handleExportPDF}
         onBack={onBack}
+        toolbarActions={toolbarActions ? toolbarActions(getDocument) : undefined}
       />
     </div>
     </EditorConfigContext.Provider>

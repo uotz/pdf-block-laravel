@@ -4,16 +4,15 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Node & NPM Binaries
+    | Chrome / Chromium Binary
     |--------------------------------------------------------------------------
     |
-    | Paths to the Node.js and npm binaries on the server. Browsershot needs
-    | these to launch Puppeteer. Adjust for your environment (e.g. nvm paths).
+    | Path to the Chrome or Chromium executable. chrome-php communicates
+    | directly via DevTools Protocol — Node.js is NOT required.
     |
     */
 
-    'node_binary' => env('PDF_BLOCK_NODE_BINARY', '/usr/bin/node'),
-    'npm_binary'  => env('PDF_BLOCK_NPM_BINARY', '/usr/bin/npm'),
+    'chrome_path' => env('PDF_BLOCK_CHROME_PATH', '/usr/bin/chromium'),
 
     /*
     |--------------------------------------------------------------------------
@@ -31,7 +30,7 @@ return [
     | Chrome Arguments
     |--------------------------------------------------------------------------
     |
-    | Extra CLI flags passed to the Chromium instance spawned by Puppeteer.
+    | Extra CLI flags passed to the Chromium instance.
     | The defaults below work for most Linux servers and Docker containers.
     |
     */

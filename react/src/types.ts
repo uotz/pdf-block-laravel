@@ -125,7 +125,6 @@ export interface PDFBuilderConfig {
 export interface PDFBuilderCallbacks {
   onDocumentChange?: (doc: Document) => void;
   onBlockSelect?: (blockId: string | null) => void;
-  onExport?: (blob: Blob) => void;
   onSave?: (doc: Document) => void;
 }
 
@@ -159,7 +158,6 @@ export interface UIState {
   isDragging: boolean;
   dragSource: 'sidebar' | 'canvas' | null;
   zoom: number;
-  exporting: boolean;
   theme: 'light' | 'dark';
 }
 
@@ -183,8 +181,6 @@ export interface BlockDefinition {
 
 // ─── Ref API (imperative handle) ──────────────────────────────
 export interface PDFBuilderRef {
-  exportPDF(): Promise<Blob>;
-  downloadPDF(filename?: string): Promise<void>;
   print(): void;
   getDocument(): Document;
   setDocument(doc: Document): void;

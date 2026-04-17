@@ -14,4 +14,4 @@
 
   $html = $tiptap->toHtml($block['content'] ?? []);
 @endphp
-<div style="{{ $style }}">{!! $html !!}</div>
+<div class="pdfb-tiptap" style="{{ $style }}">{!! $html !!}</div>

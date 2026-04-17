@@ -1,19 +1,20 @@
 import React, { useCallback, useState } from 'react';
 import {
-  Undo2, Redo2, Eye, Code, Save, Download,
-  ArrowLeft, ZoomIn, ZoomOut, Trash2, Loader2, Printer, Sun, Moon,
+  Undo2, Redo2, Eye, Code, Save,
+  ArrowLeft, ZoomIn, ZoomOut, Trash2, Printer, Sun, Moon,
 } from 'lucide-react';
 import { useEditorStore } from '../store';
 import { t } from '../i18n';
-import { openPrintWindow } from '../export/pdf';
+import { openPrintWindow } from '../export/print';
 import { ConfirmDialog } from './ui/ConfirmDialog';
 
 interface TopToolbarProps {
-  onExportPDF?: () => Promise<void> | void;
   onBack?: () => void;
+  /** Slot for extra actions (e.g. external export button) */
+  toolbarActions?: React.ReactNode;
 }
 
-export function TopToolbar({ onExportPDF, onBack }: TopToolbarProps) {
+export function TopToolbar({ onBack, toolbarActions }: TopToolbarProps) {
   const title = useEditorStore(s => s.document.meta.title);
   const doc = useEditorStore(s => s.document);
   const updateMeta = useEditorStore(s => s.updateMeta);
@@ -29,24 +30,12 @@ export function TopToolbar({ onExportPDF, onBack }: TopToolbarProps) {
   const zoom = useEditorStore(s => s.ui.zoom);
   const setZoom = useEditorStore(s => s.setZoom);
   const clearCanvas = useEditorStore(s => s.clearCanvas);
-  const exporting = useEditorStore(s => s.ui.exporting);
-  const setExporting = useEditorStore(s => s.setExporting);
   const blocksCount = useEditorStore(s => s.document.blocks.length);
   const theme = useEditorStore(s => s.ui.theme);
   const setTheme = useEditorStore(s => s.setTheme);
 
   const canUndo = historyIndex > 0;
   const canRedo = historyIndex < historyLength - 1;
-
-  const handleExport = useCallback(async () => {
-    if (!onExportPDF || exporting) return;
-    setExporting(true);
-    try {
-      await onExportPDF();
-    } finally {
-      setExporting(false);
-    }
-  }, [onExportPDF, exporting, setExporting]);
 
   const handlePrint = useCallback(() => {
     const pageEl = window.document.querySelector('.pdfb-page') as HTMLElement;
@@ -139,16 +128,7 @@ export function TopToolbar({ onExportPDF, onBack }: TopToolbarProps) {
         <button className="pdfb-toolbar-btn" onClick={save} title={t('toolbar.save')} type="button">
           <Save size={18} />
         </button>
-        <button
-          className="pdfb-toolbar-btn pdfb-toolbar-btn--primary"
-          onClick={handleExport}
-          disabled={exporting}
-          title={t('toolbar.export')}
-          type="button"
-        >
-          {exporting ? <Loader2 size={18} className="pdfb-spin" /> : <Download size={18} />}
-          <span>{exporting ? 'Exportando...' : t('toolbar.export')}</span>
-        </button>
+        {toolbarActions}
       </div>
       </div>
       {showClearConfirm && (

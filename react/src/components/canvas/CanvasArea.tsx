@@ -161,10 +161,18 @@ export function CanvasArea({ onCopy }: { onCopy?: (blockId: string) => void }) {
             className="pdfb-page-content"
             style={{
               padding: `${marginTopPx}px ${marginRightPx}px ${marginBottomPx}px ${marginLeftPx}px`,
-              background: doc.globalStyles.contentBackground || undefined,
+              // No background here — the padding zone represents the page margin
+              // and must remain transparent so pageBackground (on .pdfb-page) shows through.
               color: doc.globalStyles.defaultFontColor || undefined,
               outline: isOver ? '2px dashed var(--pdfb-color-accent)' : undefined,
               minHeight: '100%',
+            }}
+          >
+          <div
+            className="pdfb-content-inner"
+            style={{
+              background: doc.globalStyles.contentBackground || undefined,
+              minHeight: contentArea.height,
             }}
           >
             <SortableContext
@@ -218,6 +226,7 @@ export function CanvasArea({ onCopy }: { onCopy?: (blockId: string) => void }) {
           ))}
         </div>
       </div>
+    </div>
     </div>
     {showMinimap && (
       <Minimap

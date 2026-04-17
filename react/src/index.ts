@@ -103,4 +103,4 @@ export { t, setLocale, getLocale, getAvailableLocales } from './i18n';
 export { BLOCK_DEFINITIONS, LAYOUT_PRESETS, CONTENT_BLOCK_TYPES, getBlockDefinition } from './blocks/registry';
 
 // ─── Export Utilities ─────────────────────────────────────────
-export { exportToPDF, downloadPDF, openPrintWindow } from './export/pdf';
+export { openPrintWindow } from './export/print';
