@@ -5,7 +5,7 @@
   "description": "A visual, drag-and-drop PDF document builder for React. Renders a full WYSIWYG editor with inline styles, ready for server-side PDF generation.",
   "keywords": ["pdf", "builder", "react", "editor", "wysiwyg", "drag-and-drop", "document"],
   "license": "MIT",
-  "author": "",
+  "author": "Jonathas Yoharu <jonathas_a.a@hotmail.com>",
   "repository": {
     "type": "git",
     "url": ""
