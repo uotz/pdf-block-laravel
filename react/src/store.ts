@@ -382,6 +382,7 @@ export const useEditorStore = create<EditorStore>()(
         _defaultGlobalStyles: defaultGlobalStyles,
         _history: [{ blocks: JSON.parse(JSON.stringify(document.blocks)), pageSettings: JSON.parse(JSON.stringify(document.pageSettings)), globalStyles: JSON.parse(JSON.stringify(document.globalStyles)) }],
         _historyIndex: 0,
+        ...(config?.theme ? { ui: { ...get().ui, theme: config.theme } } : {}),
       });
     },
 

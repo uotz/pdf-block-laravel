@@ -206,6 +206,12 @@ export const PDFBuilder = forwardRef<PDFBuilderRef, PDFBuilderProps>(function PD
     fromJSON(json) {
       useEditorStore.getState().setDocument(JSON.parse(json));
     },
+    setTheme(theme) {
+      useEditorStore.getState().setTheme(theme);
+    },
+    getTheme() {
+      return useEditorStore.getState().ui.theme;
+    },
   }));
 
   return (

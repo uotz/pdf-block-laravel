@@ -91,6 +91,7 @@ export type {
   MinimapConfig,
   MinimapPosition,
   MinimapMode,
+  ToolbarButtonsConfig,
 
   // UI State
   SidebarPanel,

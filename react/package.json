@@ -1,6 +1,6 @@
 {
   "name": "@pdf-block/react",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "type": "module",
   "description": "A visual, drag-and-drop PDF document builder for React. Renders a full WYSIWYG editor with inline styles, ready for server-side PDF generation.",
   "keywords": ["pdf", "builder", "react", "editor", "wysiwyg", "drag-and-drop", "document"],

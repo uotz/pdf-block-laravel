@@ -79,6 +79,25 @@ export interface MinimapConfig {
 export type Locale = 'pt-BR' | 'en';
 export type Theme = 'dark' | 'light';
 
+export interface ToolbarButtonsConfig {
+  /** Botão de alternar tema claro/escuro. Padrão: `true`. */
+  theme?: boolean;
+  /** Botões de undo/redo. Padrão: `true`. */
+  undoRedo?: boolean;
+  /** Controles de zoom. Padrão: `true`. */
+  zoom?: boolean;
+  /** Botão de limpar canvas. Padrão: `true`. */
+  clear?: boolean;
+  /** Botão de editor de código JSON. Padrão: `true`. */
+  code?: boolean;
+  /** Botão de preview. Padrão: `true`. */
+  preview?: boolean;
+  /** Botão de imprimir. Padrão: `true`. */
+  print?: boolean;
+  /** Botão de salvar. Padrão: `true`. */
+  save?: boolean;
+}
+
 export interface PDFBuilderConfig {
   locale?: Locale;
   theme?: Theme;
@@ -88,6 +107,17 @@ export interface PDFBuilderConfig {
   showRightPanel?: boolean;
   readOnly?: boolean;
   canvasWidth?: number;
+  /**
+   * Controle granular de visibilidade dos botões da toolbar.
+   * - `false` — oculta todos os botões de ação de uma vez.
+   * - `ToolbarButtonsConfig` — controle individual por botão.
+   * Omitir uma chave equivale a `true` (visível).
+   *
+   * @example
+   * toolbarButtons: false                          // oculta tudo
+   * toolbarButtons: { theme: false, print: false } // oculta só esses
+   */
+  toolbarButtons?: ToolbarButtonsConfig | false;
   /**
    * Default page settings used when creating a new document or clearing the canvas.
    * Merged (deep) on top of the built-in defaults — you only need to specify the
@@ -213,4 +243,8 @@ export interface PDFBuilderRef {
   selectBlock(id: string | null): void;
   toJSON(): string;
   fromJSON(json: string): void;
+  /** Altera o tema do editor programaticamente. */
+  setTheme(theme: 'light' | 'dark'): void;
+  /** Retorna o tema atual do editor. */
+  getTheme(): 'light' | 'dark';
 }
