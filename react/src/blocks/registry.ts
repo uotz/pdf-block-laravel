@@ -44,7 +44,7 @@ export const CONTENT_BLOCK_TYPES: BlockType[] = [
  * - 'layouts', 'modules', 'styles' open expandable panels.
  * - Everything else is a direct-add block type (click=add, drag=drag to canvas).
  */
-export type SidebarItemAction = 'panel' | 'block';
+export type SidebarItemAction = 'panel' | 'block' | 'separator';
 
 export interface SidebarItem {
   key: string;
@@ -58,6 +58,9 @@ export interface SidebarItem {
 }
 
 export const SIDEBAR_ITEMS: SidebarItem[] = [
+  { key: 'tree',    icon: 'Layers', labelKey: 'sidebar.tree',    action: 'panel', panel: 'tree'    },
+  { key: 'modules', icon: 'Puzzle', labelKey: 'sidebar.modules', action: 'panel', panel: 'modules' },
+  { key: 'sep-panels', icon: '', labelKey: '', action: 'separator' },
   { key: 'layouts', icon: 'LayoutGrid', labelKey: 'sidebar.layouts', action: 'panel', panel: 'layouts' },
   { key: 'text', icon: 'Type', labelKey: 'sidebar.text', action: 'block', blockType: 'text' },
   { key: 'image', icon: 'Image', labelKey: 'sidebar.image', action: 'block', blockType: 'image' },
@@ -66,9 +69,7 @@ export const SIDEBAR_ITEMS: SidebarItem[] = [
   { key: 'spacer', icon: 'MoveVertical', labelKey: 'sidebar.spacer', action: 'block', blockType: 'spacer' },
   { key: 'banner', icon: 'ImagePlay', labelKey: 'sidebar.banner', action: 'block', blockType: 'banner' },
   { key: 'table', icon: 'Table', labelKey: 'sidebar.table', action: 'block', blockType: 'table' },
-  { key: 'qrcode', icon: 'QrCode', labelKey: 'sidebar.qrcode', action: 'block', blockType: 'qrcode' },
-  { key: 'chart', icon: 'BarChart3', labelKey: 'sidebar.chart', action: 'block', blockType: 'chart' },
-  { key: 'pagebreak', icon: 'SeparatorHorizontal', labelKey: 'sidebar.pagebreak', action: 'block', blockType: 'pagebreak' },
-  { key: 'modules', icon: 'Puzzle', labelKey: 'sidebar.modules', action: 'panel', panel: 'modules' },
-  { key: 'tree',    icon: 'Layers', labelKey: 'sidebar.tree',    action: 'panel', panel: 'tree'    },
+  // { key: 'qrcode', icon: 'QrCode', labelKey: 'sidebar.qrcode', action: 'block', blockType: 'qrcode' },       // WIP: oculto por enquanto
+  // { key: 'chart', icon: 'BarChart3', labelKey: 'sidebar.chart', action: 'block', blockType: 'chart' },      // WIP: oculto até refinamento
+  // { key: 'pagebreak', icon: 'SeparatorHorizontal', labelKey: 'sidebar.pagebreak', action: 'block', blockType: 'pagebreak' }, // WIP: oculto por enquanto
 ];

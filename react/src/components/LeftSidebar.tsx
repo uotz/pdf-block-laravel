@@ -100,6 +100,11 @@ function IconRail() {
   return (
     <div className="pdfb-sidebar-rail">
       {SIDEBAR_ITEMS.map(item => {
+        // Separator
+        if (item.action === 'separator') {
+          return <div key={item.key} className="pdfb-sidebar-separator" />;
+        }
+
         // Panel items (layouts, modules, styles) toggle expandable panels
         if (item.action === 'panel') {
           const IconComp = ICON_MAP[item.icon];
