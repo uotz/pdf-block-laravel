@@ -1,9 +1,17 @@
 {
   "name": "@pdf-block/react",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "type": "module",
   "description": "A visual, drag-and-drop PDF document builder for React. Renders a full WYSIWYG editor with inline styles, ready for server-side PDF generation.",
-  "keywords": ["pdf", "builder", "react", "editor", "wysiwyg", "drag-and-drop", "document"],
+  "keywords": [
+    "pdf",
+    "builder",
+    "react",
+    "editor",
+    "wysiwyg",
+    "drag-and-drop",
+    "document"
+  ],
   "license": "MIT",
   "author": "Jonathas Yoharu <jonathas_a.a@hotmail.com>",
   "repository": {
@@ -31,7 +39,8 @@
     "lint": "eslint .",
     "test": "vitest run",
     "test:watch": "vitest",
-    "prepublishOnly": "npm run build:lib"
+    "prepublishOnly": "npm run build:lib",
+    "release": "npm run build:lib && npm version ${VERSION:?Usage: VERSION=1.2.3 pnpm release} --no-git-tag-version && npm publish --access public"
   },
   "peerDependencies": {
     "react": "^18.2.0 || ^19.0.0",

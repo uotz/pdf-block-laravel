@@ -3,6 +3,13 @@
     "description": "Server-side PDF renderer for pdf-block DSL documents. Converts JSON DSL to native PDF via Browsershot (Puppeteer).",
     "keywords": ["pdf", "laravel", "renderer", "dsl", "document", "puppeteer", "browsershot"],
     "license": "MIT",
+    "authors": [
+        {
+            "name": "Jonathas Yoharu",
+            "homepage": "https://github.com/uotz"
+        }
+    ],
+    "homepage": "https://github.com/uotz/pdf-block-laravel",
     "type": "library",
     "require": {
         "php": "^8.2",
