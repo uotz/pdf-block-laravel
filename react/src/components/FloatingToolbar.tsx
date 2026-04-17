@@ -127,18 +127,21 @@ export function FloatingToolbar({
 
   return (
     <div className="pdfb-floating-toolbar" onClick={e => e.stopPropagation()}>
-      {/* Grip handle — the ONLY element that initiates drag */}
-      <button
-        className="pdfb-floating-btn pdfb-floating-btn--grip"
-        title="Arrastar para mover"
-        type="button"
-        {...dragListeners}
-        {...dragAttributes}
-      >
-        <GripVertical size={14} />
-      </button>
-
-      <span className="pdfb-floating-sep" />
+      {/* Grip handle — apenas para blocos de conteúdo (drag de faixa/estrutura não funciona) */}
+      {isContent && (
+        <>
+          <button
+            className="pdfb-floating-btn pdfb-floating-btn--grip"
+            title="Arrastar para mover"
+            type="button"
+            {...dragListeners}
+            {...dragAttributes}
+          >
+            <GripVertical size={14} />
+          </button>
+          <span className="pdfb-floating-sep" />
+        </>
+      )}
 
       <button className="pdfb-floating-btn" onClick={handleMoveUp} title={t('float.moveUp')} type="button">
         <ChevronUp size={14} />

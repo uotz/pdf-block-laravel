@@ -65,10 +65,10 @@ export const SIDEBAR_ITEMS: SidebarItem[] = [
   { key: 'text', icon: 'Type', labelKey: 'sidebar.text', action: 'block', blockType: 'text' },
   { key: 'image', icon: 'Image', labelKey: 'sidebar.image', action: 'block', blockType: 'image' },
   { key: 'button', icon: 'SquareMousePointer', labelKey: 'sidebar.button', action: 'block', blockType: 'button' },
-  { key: 'divider', icon: 'Minus', labelKey: 'sidebar.divider', action: 'block', blockType: 'divider' },
-  { key: 'spacer', icon: 'MoveVertical', labelKey: 'sidebar.spacer', action: 'block', blockType: 'spacer' },
   { key: 'banner', icon: 'ImagePlay', labelKey: 'sidebar.banner', action: 'block', blockType: 'banner' },
   { key: 'table', icon: 'Table', labelKey: 'sidebar.table', action: 'block', blockType: 'table' },
+  { key: 'divider', icon: 'Minus', labelKey: 'sidebar.divider', action: 'block', blockType: 'divider' },
+  { key: 'spacer', icon: 'MoveVertical', labelKey: 'sidebar.spacer', action: 'block', blockType: 'spacer' },
   // { key: 'qrcode', icon: 'QrCode', labelKey: 'sidebar.qrcode', action: 'block', blockType: 'qrcode' },       // WIP: oculto por enquanto
   // { key: 'chart', icon: 'BarChart3', labelKey: 'sidebar.chart', action: 'block', blockType: 'chart' },      // WIP: oculto até refinamento
   // { key: 'pagebreak', icon: 'SeparatorHorizontal', labelKey: 'sidebar.pagebreak', action: 'block', blockType: 'pagebreak' }, // WIP: oculto por enquanto

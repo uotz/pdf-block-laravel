@@ -144,12 +144,35 @@ function IconRail() {
 
 // ─── Layouts Panel ────────────────────────────────────────────
 function LayoutsPanel() {
-  const addStripe = useEditorStore(s => s.addStripe);
+  const addStripe     = useEditorStore(s => s.addStripe);
+  const addStructure  = useEditorStore(s => s.addStructure);
+  const blocks        = useEditorStore(s => s.document.blocks);
+  const selection     = useEditorStore(s => s.selection);
 
   const handleAddLayout = useCallback((widths: number[]) => {
-    const stripe = createStripe([createStructure(widths)]);
-    addStripe(stripe);
-  }, [addStripe]);
+    const { blockId, path } = selection;
+
+    if (blockId && path.length >= 1) {
+      const stripeId = path[0];
+      const stripe = blocks.find(s => s.id === stripeId);
+
+      if (stripe) {
+        if (path.length === 1) {
+          // Faixa selecionada → insere estrutura no final da faixa
+          addStructure(stripeId, createStructure(widths));
+        } else {
+          // Estrutura (ou conteúdo dentro dela) selecionada → insere após a estrutura atual
+          const structureId = path[1];
+          const idx = stripe.children.findIndex(c => c.id === structureId);
+          addStructure(stripeId, createStructure(widths), idx !== -1 ? idx + 1 : stripe.children.length);
+        }
+        return;
+      }
+    }
+
+    // Sem seleção ou faixa não encontrada → cria nova faixa no final
+    addStripe(createStripe([createStructure(widths)]));
+  }, [addStripe, addStructure, blocks, selection]);
 
   return (
     <div>
