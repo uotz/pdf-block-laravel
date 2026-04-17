@@ -73,8 +73,27 @@
       color: {{ $defaultColor }};
       -webkit-print-color-adjust: exact;
       print-color-adjust: exact;
+      /* Prevent any element from creating a second page in single-page PDF mode.
+         overflow:hidden clips anything that extends beyond the measured scrollHeight. */
+      overflow: hidden;
+    }
+    /* ── Single-page mode: suppress ALL page breaks ─────────────────────
+       Chrome's PDF renderer uses break-* CSS properties to decide where
+       to split pages. We force everything to avoid breaks so the single
+       tall page is never split, regardless of content size. */
+    * {
+      break-inside: auto !important;
+      break-before: auto !important;
+      break-after: auto !important;
+      page-break-inside: auto !important;
+      page-break-before: auto !important;
+      page-break-after: auto !important;
     }
     img { max-width: 100%; display: block; }
+    /* Force zero page margins — the DSL margins are embedded as body padding.
+       Without this, Chrome may apply default @page margins on top, pushing
+       content past the measured paperHeight and creating a second page. */
+    @page { margin: 0; }
     a { color: inherit; text-decoration: none; }
     table { border-collapse: collapse; }
     .pdfb-content-area {

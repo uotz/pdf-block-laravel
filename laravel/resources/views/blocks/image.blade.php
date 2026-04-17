@@ -18,10 +18,17 @@
       default => $block['width'] . 'px',
   };
   $h = ($block['height'] ?? 'auto') === 'auto' ? 'auto' : $block['height'] . 'px';
+
+  // In single-page PDF mode, images with height:auto can cause scrollHeight
+  // miscalculation if the image hasn't fully loaded at measurement time.
+  // We constrain max-height so even in the worst case (image loads after
+  // measurement), it can't expand beyond the container and force a new page.
+  $maxH = $h === 'auto' ? 'max-height:100vh;' : '';
   
   $border = $s['border'] ?? [];
   $imgStyle = implode('', [
       "width:{$w};height:{$h};",
+      $maxH,
       "object-fit:" . ($block['objectFit'] ?? 'contain') . ";",
       "max-width:100%;display:block;",
       'border-top:' . S::borderSideToCSS($border['top'] ?? ['width'=>0,'style'=>'none','color'=>'#000']) . ';',

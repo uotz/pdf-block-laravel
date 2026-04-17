@@ -91,9 +91,23 @@ class PdfBlockRenderer
             $page->setHtml($html, $timeout);
             $page->evaluate('document.fonts.ready')->getReturnValue($timeout);
 
+            // Wait for all images to load before measuring height.
+            // Without this, images with height:auto have 0 height at measurement
+            // time, causing scrollHeight to be too small → content overflows into
+            // a second page when images render at their natural height.
+            $page->evaluate(<<<'JS'
+                Promise.all(
+                    Array.from(document.images)
+                        .filter(img => !img.complete)
+                        .map(img => new Promise(resolve => {
+                            img.onload = img.onerror = resolve;
+                        }))
+                )
+            JS)->getReturnValue($timeout);
+
             // Measure full content height.
             // getBoundingClientRect on the last child captures collapsed margins that
-            // scrollHeight misses. We take the max of both for safety, then add 1px
+            // scrollHeight misses. We take the max of both for safety, then add 2px
             // buffer to absorb sub-pixel rounding inside Chrome's PDF compositor.
             $scrollH = $page->evaluate(<<<'JS'
                 (() => {
@@ -103,7 +117,7 @@ class PdfBlockRenderer
                         document.body.scrollHeight,
                         document.documentElement.scrollHeight
                     );
-                    return Math.max(byRect, byScroll) + 1; // +1px safety buffer
+                    return Math.max(byRect, byScroll) + 2; // +2px safety buffer
                 })()
             JS)->getReturnValue($timeout);
 

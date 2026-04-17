@@ -45,7 +45,9 @@
     box-shadow: none !important;
   }
 
-  /* Page break support */
+  /* Page break support — only for paginated mode.
+     In continuous (single-page) mode, print.ts injects overrides that
+     reset break-inside to auto so tall blocks don't force extra pages. */
   .pdfb-block-pagebreak {
     break-after: page;
     page-break-after: always;
@@ -62,11 +64,10 @@
     background: none !important;
   }
 
-  /* Avoid breaks inside blocks */
-  .pdfb-canvas-block {
-    break-inside: avoid;
-    page-break-inside: avoid;
-  }
+  /* Note: break-inside rules are injected dynamically by print.ts
+     based on the rendering mode (continuous vs paginated).
+     Do NOT add break-inside: avoid here — it causes extra pages
+     in single-page mode when blocks (lists, tables) are tall. */
 
   /* Images */
   .pdfb-block-image img {
