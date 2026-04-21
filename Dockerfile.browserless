@@ -1,0 +1,36 @@
+# ─── pdf-block/browserless ───────────────────────────────────────────────────
+# Imagem customizada do browserless/chromium com Noto Color Emoji.
+#
+# A imagem base usa Apple Color Emoji, que tem visual diferente do NotoColorEmoji
+# usado no driver local. Esta imagem unifica o padrão de emoji em ambos os drivers.
+# ─────────────────────────────────────────────────────────────────────────────
+FROM ghcr.io/browserless/chromium:latest
+
+LABEL org.opencontainers.image.title="pdf-block-browserless" \
+      org.opencontainers.image.description="browserless/chromium com Noto Color Emoji — driver de PDF para pdf-block/laravel" \
+      org.opencontainers.image.source="https://github.com/uotz/pdf-block-laravel" \
+      org.opencontainers.image.licenses="MIT"
+
+USER root
+
+# A imagem base registra fonts-noto-color-emoji no dpkg mas remove os arquivos
+# de fonte para reduzir o tamanho. --reinstall força o download e instalação real.
+# Em seguida, define Noto Color Emoji com precedência sobre Apple Color Emoji.
+RUN apt-get update \
+    && apt-get install -y --reinstall fonts-noto-color-emoji \
+    && apt-get install -y --no-install-recommends curl ca-certificates fontconfig \
+    && rm -rf /var/lib/apt/lists/* \
+    && printf '<?xml version="1.0"?>\n<!DOCTYPE fontconfig SYSTEM "fonts.dtd">\n<fontconfig>\n  <alias>\n    <family>emoji</family>\n    <prefer><family>Noto Color Emoji</family></prefer>\n  </alias>\n</fontconfig>\n' \
+           > /etc/fonts/conf.d/01-noto-color-emoji.conf
+
+# Baixa as 20 fontes curadas para uso local do Chromium. Com isso o
+# Browserless resolve qualquer uma das famílias do FontPicker via fontconfig,
+# eliminando por completo o tráfego para fonts.googleapis.com em runtime.
+# Recomendado rodar com PDF_BLOCK_GOOGLE_FONTS=false no .env.
+COPY docker/install-fonts.sh /tmp/install-fonts.sh
+RUN chmod +x /tmp/install-fonts.sh \
+    && /tmp/install-fonts.sh \
+    && rm /tmp/install-fonts.sh \
+    && fc-cache -f
+
+USER blessuser
