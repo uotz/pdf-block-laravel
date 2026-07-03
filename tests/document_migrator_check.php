@@ -1,0 +1,91 @@
+<?php
+
+declare(strict_types=1);
+
+// Teste standalone do DocumentMigrator (v2↔v3). Garante: detecção de v3, achatar
+// stripe trivial, multi-coluna→columnSet, banner→group, e round-trip v2→v3→v2
+// preservando os ids de blocos-folha. Rodar via docker (sem bootar Laravel).
+
+require __DIR__ . '/../src/DocumentMigrator.php';
+
+use PdfBlock\Laravel\DocumentMigrator;
+
+$failures = 0;
+function check(string $name, bool $cond): void
+{
+    global $failures;
+    echo ($cond ? 'ok: ' : 'FAIL: ') . $name . "\n";
+    if (! $cond) { $failures++; }
+}
+
+// Estilos default COMPLETOS (como o editor envia) para o flatten valer.
+function ds(): array
+{
+    return [
+        'padding' => ['top' => 0, 'right' => 0, 'bottom' => 0, 'left' => 0],
+        'margin' => ['top' => 0, 'right' => 0, 'bottom' => 0, 'left' => 0],
+        'border' => [
+            'top' => ['width' => 0, 'style' => 'none', 'color' => '#000000'],
+            'right' => ['width' => 0, 'style' => 'none', 'color' => '#000000'],
+            'bottom' => ['width' => 0, 'style' => 'none', 'color' => '#000000'],
+            'left' => ['width' => 0, 'style' => 'none', 'color' => '#000000'],
+        ],
+        'borderRadius' => ['topLeft' => 0, 'topRight' => 0, 'bottomRight' => 0, 'bottomLeft' => 0],
+        'background' => ['type' => 'solid', 'color' => 'transparent'],
+        'shadow' => ['enabled' => false, 'offsetX' => 0, 'offsetY' => 2, 'blur' => 8, 'spread' => 0, 'color' => 'rgba(0,0,0,0.15)'],
+        'opacity' => 1,
+    ];
+}
+function dm(): array { return ['hideOnExport' => false, 'locked' => false, 'breakBefore' => false, 'breakAfter' => false, 'keepTogether' => false]; }
+function txt(string $id): array { return ['id' => $id, 'type' => 'text', 'meta' => dm(), 'styles' => ds()]; }
+function col(string $id, int $w, array $children): array { return ['id' => $id, 'width' => $w, 'styles' => ds(), 'children' => $children]; }
+function st(string $id, array $cols, array $extra = []): array { return array_merge(['id' => $id, 'type' => 'structure', 'meta' => dm(), 'styles' => ds(), 'columnGap' => 0, 'verticalAlignment' => 'top', 'columns' => $cols], $extra); }
+function stripe(string $id, array $kids, array $extra = []): array { return array_merge(['id' => $id, 'type' => 'stripe', 'meta' => dm(), 'styles' => ds(), 'contentMaxWidth' => 0, 'contentAlignment' => 'center', 'children' => $kids], $extra); }
+function docOf(array $blocks): array { return ['id' => 'd1', 'version' => '2.0.0', 'meta' => [], 'pageSettings' => ['paperSize' => ['preset' => 'a4', 'width' => 210, 'height' => 297], 'orientation' => 'portrait', 'margins' => ['top' => 10, 'right' => 10, 'bottom' => 10, 'left' => 10], 'defaultFontFamily' => 'Spectral, serif'], 'globalStyles' => ['pageBackground' => '#fff', 'contentBackground' => '#fff', 'defaultFontColor' => '#333'], 'blocks' => $blocks]; }
+
+function leaves(array $blocks): array
+{
+    $o = [];
+    $walk = function (array $children) use (&$walk, &$o) {
+        foreach ($children as $ch) {
+            if (($ch['type'] ?? '') === 'structure') foreach ($ch['columns'] as $c) $walk($c['children']);
+            else $o[] = $ch['id'];
+        }
+    };
+    foreach ($blocks as $s) foreach ($s['children'] as $structure) foreach ($structure['columns'] as $c) $walk($c['children']);
+    return $o;
+}
+
+// (1) detecção de v3
+check('isV3 reconhece sections', DocumentMigrator::isV3(['sections' => []]));
+check('isV3 reconhece version 3.0.0', DocumentMigrator::isV3(['version' => '3.0.0']));
+check('isV3 falso p/ v2', ! DocumentMigrator::isV3(['blocks' => []]));
+
+// (2) achata stripe trivial → fluxo direto
+$v3 = DocumentMigrator::v2ToV3(docOf([stripe('s1', [st('st1', [col('c1', 100, [txt('t1'), txt('t2')])])])]));
+$flow = $v3['sections'][0]['flow'];
+check('1 seção', count($v3['sections']) === 1);
+check('stripe trivial achatada (fluxo = 2 folhas)', count($flow) === 2 && ($flow[0]['id'] ?? '') === 't1' && ($flow[1]['id'] ?? '') === 't2');
+check('pageSetup veio de pageSettings', ($v3['sections'][0]['pageSetup']['orientation'] ?? '') === 'portrait');
+
+// (3) multi-coluna → columnSet
+$v3b = DocumentMigrator::v2ToV3(docOf([stripe('s1', [st('st1', [col('c1', 30, [txt('a')]), col('c2', 70, [txt('b')])], ['columnGap' => 12])])]));
+$cs = $v3b['sections'][0]['flow'][0];
+check('multi-coluna vira columnSet', ($cs['type'] ?? '') === 'columnSet' && count($cs['columns']) === 2 && $cs['columns'][0]['width'] === 30);
+
+// (4) banner → group
+$v3c = DocumentMigrator::v2ToV3(docOf([stripe('s1', [st('st1', [col('c1', 100, [txt('h')])], ['variant' => 'banner', 'backgroundImage' => 'x.png', 'minHeight' => 300])])]));
+$g = $v3c['sections'][0]['flow'][0];
+check('banner vira group banner', ($g['type'] ?? '') === 'group' && ($g['variant'] ?? '') === 'banner' && ($g['banner']['backgroundImage'] ?? '') === 'x.png');
+
+// (5) round-trip v2→v3→v2 preserva ids de folha em ordem
+$v2 = docOf([
+    stripe('s1', [st('st1', [col('c1', 100, [txt('t1')])])]),
+    stripe('s2', [st('st2', [col('c2', 50, [txt('a'), st('nst', [col('nc', 100, [txt('deep')])])]), col('c3', 50, [txt('b')])])], ['styles' => array_merge(ds(), ['padding' => ['top' => 8, 'right' => 0, 'bottom' => 0, 'left' => 0]])]),
+]);
+$back = DocumentMigrator::v3ToV2(DocumentMigrator::v2ToV3($v2));
+check('round-trip preserva ids de folha', leaves($v2['blocks']) === leaves($back['blocks']));
+check('round-trip leaves = [t1,a,deep,b]', leaves($v2['blocks']) === ['t1', 'a', 'deep', 'b']);
+
+echo "\n" . ($failures === 0 ? "TODOS OS TESTES PASSARAM\n" : "$failures FALHA(S)\n");
+exit($failures === 0 ? 0 : 1);
