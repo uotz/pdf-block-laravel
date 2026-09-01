@@ -1,7 +1,7 @@
 name: Bug
 description: O pacote está se comportando errado
 title: "[bug] "
-labels: ["tipo: bug", "área: laravel"]
+labels: ["tipo: bug", "componente: laravel"]
 projects: ["accusense-tech/1"]
 body:
   - type: markdown

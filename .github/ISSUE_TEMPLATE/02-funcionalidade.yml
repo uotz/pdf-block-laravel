@@ -1,7 +1,7 @@
 name: Funcionalidade
 description: Capacidade nova no pacote Laravel
 title: "[feat] "
-labels: ["tipo: funcionalidade", "área: laravel"]
+labels: ["tipo: funcionalidade", "componente: laravel"]
 projects: ["accusense-tech/1"]
 body:
   - type: textarea
@@ -30,9 +30,10 @@ body:
       required: true
 
   - type: dropdown
-    id: area
+    id: componente
     attributes:
-      label: Área
+      label: Componente
+      description: Onde no pacote. A **Área** do board (Backend, Infra/CI, …) é preenchida no refinamento.
       options:
         - laravel (blades, drivers, config)
         - browserless (imagem e serviço de render)
