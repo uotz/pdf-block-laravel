@@ -1,0 +1,71 @@
+name: Bug
+description: O pacote está se comportando errado
+title: "[bug] "
+labels: ["tipo: bug", "componente: laravel"]
+projects: ["accusense-tech/1"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Este repositório é a **distribuição** do pacote — o código-fonte vive no
+        monorepo `pdf-block`. Pode abrir a issue aqui normalmente: ela entra no
+        mesmo board de desenvolvimento e é tratada junto com o resto.
+
+  - type: textarea
+    id: o-que-acontece
+    attributes:
+      label: O que acontece
+    validations:
+      required: true
+
+  - type: textarea
+    id: esperado
+    attributes:
+      label: O que deveria acontecer
+    validations:
+      required: true
+
+  - type: textarea
+    id: repro
+    attributes:
+      label: Como reproduzir
+      description: Passos numerados. Cole a DSL do documento se o problema for de render.
+      value: |
+        1.
+        2.
+        3.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: driver
+    attributes:
+      label: Driver de render
+      options:
+        - local (Chromium CLI no container do PHP)
+        - browserless (HTTP para serviço Browserless v2)
+        - Os dois
+        - Não se aplica
+    validations:
+      required: true
+
+  - type: input
+    id: versoes
+    attributes:
+      label: Versões
+      description: "`pdf-block/laravel`, Laravel e PHP. Ex.: 3.1.0 / Laravel 11 / PHP 8.3"
+    validations:
+      required: true
+
+  - type: textarea
+    id: config
+    attributes:
+      label: Trecho relevante de `config/pdf-block.php`
+      description: Remova credenciais antes de colar.
+      render: php
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Erro, stack trace ou PDF gerado
+      description: Anexe o PDF quando o problema for de render.

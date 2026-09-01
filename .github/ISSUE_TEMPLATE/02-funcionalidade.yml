@@ -1,0 +1,49 @@
+name: Funcionalidade
+description: Capacidade nova no pacote Laravel
+title: "[feat] "
+labels: ["tipo: funcionalidade", "componente: laravel"]
+projects: ["accusense-tech/1"]
+body:
+  - type: textarea
+    id: problema
+    attributes:
+      label: Que problema isso resolve
+      description: O problema, não a solução.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposta
+    attributes:
+      label: Proposta
+    validations:
+      required: true
+
+  - type: textarea
+    id: aceite
+    attributes:
+      label: Critério de aceite
+      value: |
+        - [ ]
+        - [ ]
+    validations:
+      required: true
+
+  - type: dropdown
+    id: componente
+    attributes:
+      label: Componente
+      description: Onde no pacote. A **Área** do board (Backend, Infra/CI, …) é preenchida no refinamento.
+      options:
+        - laravel (blades, drivers, config)
+        - browserless (imagem e serviço de render)
+        - docs
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: breaking
+    attributes:
+      label: Compatibilidade
+      options:
+        - label: Isso quebra compatibilidade (exige major)

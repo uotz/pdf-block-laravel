@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Documentação do pacote
+    url: https://github.com/accusense-tech/pdf-block-laravel/blob/main/README.md
+    about: Instalação, drivers de render (local e browserless) e configuração.
+  - name: Pacote no Packagist
+    url: https://packagist.org/packages/pdf-block/laravel
+    about: Versões publicadas e requisitos de compatibilidade.
